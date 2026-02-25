@@ -79,6 +79,8 @@ They can be of type:
 - red giant
 - blue giant
 
+![Alt text](doc/images/red_dwarf.png)
+
 each star has a associated luminosity, temperature and color.
 
 If two stars are to close to each other they can exchange material via an accretion disk.
