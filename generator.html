@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stellar Architect SPA</title>
+    <script src="astronomy_data.js"></script>
+    <script src="helper_functions.js"></script>
+    <script src="astronomy_db.js"></script>
+    <style>
+        :root { --bg: #0d1117; --panel: #161b22; --accent: #58a6ff; --text: #c9d1d9; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; }
+        
+        .nav { display: flex; background: #010409; border-bottom: 1px solid #30363d; }
+        .tab-btn { padding: 15px 25px; cursor: pointer; background: none; border: none; color: var(--text); opacity: 0.7; }
+        .tab-btn.active { opacity: 1; border-bottom: 2px solid var(--accent); }
+
+        .container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; padding: 20px; flex-grow: 1; overflow: hidden; }
+        .sidebar { background: var(--panel); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+        .main { display: flex; flex-direction: column; gap: 20px; }
+
+        label { font-size: 0.75rem; font-weight: bold; color: #8b949e; text-transform: uppercase; }
+        select, input, textarea { background: #0d1117; color: white; border: 1px solid #30363d; padding: 10px; border-radius: 4px; font-family: inherit; }
+        textarea { font-family: 'Consolas', monospace; font-size: 12px; resize: vertical; }
+        
+        button { background: var(--accent); color: #fff; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { filter: brightness(1.2); }
+
+        .digest-area { font-family: monospace; background: #000; padding: 10px; border: 1px dashed #30363d; color: var(--accent); word-break: break-all; font-size: 11px; }
+        .output-box { flex-grow: 1; background: #000; color: #7ee787; }
+    </style>
+</head>
+<body>
+
+<div class="nav">
+    <button class="tab-btn active">System Architect</button>
+    <button class="tab-btn">Documentation</button>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <label>Primary Star</label>
+        <select id="star1"></select>
+
+        <label>Companion Star</label>
+        <select id="star2"></select>
+
+        <label>Planet Count (0-99)</label>
+        <input type="text" id="pCount" placeholder="e.g. 5 or RANDOM" value="5">
+
+        <label>JSON Template Overrides</label>
+        <textarea id="templateInput" placeholder='{ "planets": [ { "name": "Arakis" } ] }' style="height: 150px;"></textarea>
+
+        <button onclick="handleGenerate()">Generate System</button>
+        <button onclick="visualizeSystem()" style="background: #238636; margin-top: 5px;">Visualize System</button>
+
+        <label>Digest (NX25-E4A1-B64)</label>
+        <div id="digestDisplay" class="digest-area">----</div>
+    </div>
+
+    <div class="main">
+        <label>Populated JSON Structure</label>
+        <textarea id="jsonOutput" class="output-box" readonly></textarea>
+    </div>
+</div>
+
+
+<script src="astronomy_data.js"></script>
+<script src="astronomy_functions.js"></script>
+<script src="helper_functions.js"></script>
+<script src="gui.js"></script>
+<script src="visualization.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+/**
+ * Initialization: Dynamic Select Boxes
+ */
+function init() {
+    const s1 = document.getElementById('star1');
+    const s2 = document.getElementById('star2');
+
+    s1.add(new Option("--- RANDOM ---", "RANDOM"));
+    s2.add(new Option("--- NONE ---", "NONE"));
+    s2.add(new Option("--- RANDOM ---", "RANDOM"));
+
+    Object.entries(STAR_ID_MAP).forEach(([char, key]) => {
+        if (char === 'X') return;
+        const name = key.replace(/_/g, ' ');
+        s1.add(new Option(name, key));
+        s2.add(new Option(name, key));
+    });
+
+    // URL Loading Logic
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('s')) {
+        loadFromDigest(params.get('s'));
+    } else {
+        handleGenerate(); 
+    }
+}
+
+/**
+ * Main Generation Trigger
+ */
+function handleGenerate() {
+    let s1 = document.getElementById('star1').value;
+    let s2 = document.getElementById('star2').value;
+    let pCountRaw = document.getElementById('pCount').value.toUpperCase();
+    
+    // Resolve RANDOM values
+    const allStarKeys = Object.values(STAR_ID_MAP).filter(k => k !== "NONE");
+    if (s1 === "RANDOM") s1 = allStarKeys[Math.floor(Math.random() * allStarKeys.length)];
+    if (s2 === "RANDOM") s2 = ["NONE", ...allStarKeys][Math.floor(Math.random() * (allStarKeys.length + 1))];
+    
+    let count = (pCountRaw === "RANDOM") ? Math.floor(Math.random() * 15) : parseInt(pCountRaw) || 0;
+    
+    const seed = Math.floor(Math.random() * 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+    const templateText = document.getElementById('templateInput').value;
+    
+    let templateObj = null;
+    try { if(templateText.trim()) templateObj = JSON.parse(templateText); } catch(e) { alert("Invalid Template JSON"); }
+
+    execute(s1, s2, count, seed, templateObj);
+}
+
+/**
+ * Build, Encode, and Display
+ */
+function execute(s1, s2, count, seed, template) {
+    // 1. Encoding digest NX25-E4A1-B64
+    const s1Char = ID_TO_STAR[s1];
+    const s2Char = s2 === "NONE" ? "X" : ID_TO_STAR[s2];
+    const b64 = template ? btoa(encodeURIComponent(JSON.stringify(template))) : "";
+    
+    const digest = `${s1Char}${s2Char}${count}-${seed}-${b64}`;
+    document.getElementById('digestDisplay').innerText = digest;
+    
+    // 2. URL Update
+    const url = new URL(window.location);
+    url.searchParams.set('s', digest);
+    window.history.pushState({}, '', url);
+
+    // 3. Populate Structure (Using physics logic from external files)
+    const seedInt = parseInt(seed, 16);
+    const system = buildSystemModel(s1, s2, count, seedInt, template);
+    
+    document.getElementById('jsonOutput').value = JSON.stringify(system, null, 4);
+}
+
+function loadFromDigest(digest) {
+    const parts = digest.split('-');
+    const identity = parts[0] || "XX0";
+    const seed = parts[1] || "0000";
+    const b64 = parts[2] || "";
+
+    const s1Key = STAR_ID_MAP[identity[0]];
+    const s2Key = identity[1] === 'X' ? 'NONE' : STAR_ID_MAP[identity[1]];
+    const count = parseInt(identity.substring(2));
+
+    document.getElementById('star1').value = s1Key;
+    document.getElementById('star2').value = s2Key;
+    document.getElementById('pCount').value = count;
+
+    let template = null;
+    if (b64) {
+        template = JSON.parse(decodeURIComponent(atob(b64)));
+        document.getElementById('templateInput').value = JSON.stringify(template, null, 4);
+    }
+
+    execute(s1Key, s2Key, count, seed, template);
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

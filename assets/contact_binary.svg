@@ -1,0 +1,40 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="background: #050508;">
+  <defs>
+    <linearGradient id="star-fade" x1="0" y1="100" x2="0" y2="280" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff4500" />   <stop offset="50%" stop-color="#ff8c00" />  <stop offset="100%" stop-color="#ffd700" /> </linearGradient>
+
+    <filter id="atmosphere-glow" x="-20%" y="-20%" width="140%" height="140%">
+      
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur_base" />
+      <feColorMatrix in="blur_base" mode="matrix" 
+                     values="1 0 0 0 0  
+                             0 1 0 0 0  
+                             0 0 1 0 0  
+                             0 0 0 18 -7" result="gooey_merged" />
+      
+      <feMorphology in="gooey_merged" operator="dilate" radius="4" result="outline_thick" />
+      <feGaussianBlur in="outline_thick" stdDeviation="6" result="outline_blur" />
+      <feFlood flood-color="#ffb347" flood-opacity="0.6" result="glow_color" />
+      <feComposite in="glow_color" in2="outline_blur" operator="in" result="shared_glow" />
+      
+      <feMerge>
+        <feMergeNode in="shared_glow" />
+        <feMergeNode in="gooey_merged" />
+      </feMerge>
+      
+    </filter>
+  </defs>
+
+  <g filter="url(#atmosphere-glow)">
+    
+    <path d="M 150 100 h 60 q 40 0 40 40 v 20 q 0 40 -40 40 h -60 z" 
+          fill="url(#star-fade)" />
+
+    <path d="M 150 200 h 60 q 40 0 40 40 v 20 q 0 40 -40 40 h -60 z" 
+          fill="url(#star-fade)" />
+          
+  </g>
+  
+  <text x="155" y="145" fill="white" font-family="monospace" font-size="10" opacity="0.9">STAR A: 1.5M</text>
+  <text x="155" y="245" fill="#333" font-family="monospace" font-size="10" opacity="0.8">STAR B: 0.9M</text>
+</svg>
