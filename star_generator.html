@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stellar Symbol Lab - Constant Width</title>
+    <script src="astronomy_data.js"></script>
+    <script src="astronomy_functions.js"></script>
+    <script src="helper_functions.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #050508;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            background: #111118;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid #333;
+            width: 600px;
+        }
+        .canvas-area {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Align left to see growth */
+            background: #000;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            padding: 0 40px;
+            border: 1px inset #222;
+        }
+        .controls { display: flex; flex-direction: column; gap: 1rem; }
+        input[type=range] { width: 100%; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85rem; color: #888; }
+        span { color: #00d4ff; font-weight: bold; }
+        .marker { border-left: 1px dashed #444; height: 100%; position: absolute; top: 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3 style="text-align:center; letter-spacing: 2px;">CONSTANT WIDTH EVOLUTION</h3>
+    
+    <div class="canvas-area" id="stage" style="position: relative;">
+        <div style="position: absolute; left: 40px; right: 40px; height: 100%; border-left: 1px dashed #333; border-right: 1px dashed #333; pointer-events: none;"></div>
+        <div id="svgWrapper"></div>
+    </div>
+
+    <div class="controls">
+        <input type="range" id="tempSlider" min="1000" max="30000" step="100" value="0.5">
+        <input type="range" id="scalingFactorSlider" min="0.01" max="1" step="0.01" value="0.5">
+        <div class="stats">
+            <div>Class: <span id="starTypeName">-</span></div>
+            <div>Rect Length: <span id="rectLen">-</span></div>
+            <div>Arc Bulge: <span id="bulgeVal">-</span></div>
+            <div>Height: <span id="heightVal">-</span></div>           
+            <div>Radius: <span id="radiusVal">-</span></div>      
+            <div>Temperature: <span id="tempVal">-</span></div>
+            <div>Color: <span id="colorCode">-</span></div>           
+            <div>Solar-Radii: <span id="solarRadiVal">-</span></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const svgWrapper = document.getElementById('svgWrapper');
+const scalingFactorSlider = document.getElementById('scalingFactorSlider');
+const tempSlider = document.getElementById('tempSlider');
+
+const TOTAL_WIDTH = 40; // The target fixed width of the symbol
+
+
+let starColor = "#FFFFFF"
+
+
+function updateTemp() {
+    const temp = parseFloat(tempSlider.value);
+    starColor = getRealisticStarColor( temp )
+    //if (temp <= 4000) { starColor = "#ff9e42"; }
+    //if (temp > 5000) { starColor = "#fff3a3"; }
+    //if (temp >10000) { starColor = "#a3d9ff";  }
+    //if (temp > 20000) { starColor = "#d1e9ff";  }
+    document.getElementById('tempVal').innerText = Math.round(temp) + " K";
+    document.getElementById('colorCode').innerText = starColor;
+
+    update()
+}
+
+
+function update() {
+    const scalingFactor = parseFloat(scalingFactorSlider.value);
+    
+    // 1. Dynamic dimensions
+    const minH = 100 //10;
+    const maxH = 200 //140;
+    const height = minH + (scalingFactor * (maxH - minH));
+    
+    // Radius grows exponentially so it flattens fast at the end
+    const minR = height / 2; // Semi-circle is the tightest possible
+    const maxR = 2000;
+
+    const minSolarRadius = 0.1
+    const maxSolarRadius = 500
+    const radius = minR + (Math.pow(scalingFactor, 3) * (maxR - minR));
+
+    // 2. Geometric Calculation: The "Bulge" (Sagitta)
+    // How far the curve sticks out from the rectangle
+    const halfHeight = height / 2;
+    const bulge = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(halfHeight, 2));
+    
+    // 3. Constant Width Adjustment
+    // Rectangle length is whatever is left over
+    const rectLength = TOTAL_WIDTH - bulge;
+
+    // 4. Aesthetics
+    let color = "#ff4d4d";
+    let name = "Red Dwarf";
+    if (scalingFactor > 0.2) { name = "Dwarf"; }
+    if (scalingFactor > 0.4) { name = "Main Sequence"; }
+    if (scalingFactor > 0.7) { name = "Giant"; }
+    if (scalingFactor > 0.9) { name = "Hypergiant"; }
+
+    // Update UI
+    document.getElementById('starTypeName').innerText = name;
+    document.getElementById('rectLen').innerText = Math.round(rectLength) + "px";
+    document.getElementById('bulgeVal').innerText = Math.round(bulge) + "px";
+    document.getElementById('heightVal').innerText = Math.round(height) + "px";    
+    document.getElementById('radiusVal').innerText = Math.round(radius) + "px";
+
+    document.getElementById('solarRadiVal').innerText = scalingFactor ;
+
+pad = 0
+ 
+const pathData = `
+    M 0,0 
+    L ${rectLength},0 
+    A ${radius},${radius} 0 0 1 ${rectLength},${height} 
+    L 0,${height} 
+    Z
+`;
+
+
+const glowDepth = 60; // How far you want the glow to reach
+
+
+/*
+svgWrapper.innerHTML = `
+    <svg width="${TOTAL_WIDTH + glowDepth}" height="${height + glowDepth * 2}" 
+         viewBox="0 -${glowDepth} ${TOTAL_WIDTH + glowDepth} ${height + glowDepth * 2}" 
+         style="overflow: visible;">
+        <defs>
+            <filter id="massiveGlow" x="0" y="0" width="400%" height="300%">
+                
+                <feGaussianBlur stdDeviation="40 0" result="blur" />
+                
+                <feComponentTransfer in="blur" result="intenseBlur">
+                    <feFuncA type="linear" slope="3" /> 
+                </feComponentTransfer>
+
+                <feMerge>
+                    <feMergeNode in="intenseBlur" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+        </defs>
+        
+        <path d="${pathData}" 
+              fill="${starColor}" 
+              stroke="white" 
+              stroke-width="1" 
+              filter="url(#massiveGlow)" />
+    </svg>
+`;
+
+*/
+
+svgWrapper.innerHTML = `
+    <svg width="${TOTAL_WIDTH + pad}" height="${height + (pad * 2)}" 
+         viewBox="0 -${pad} ${TOTAL_WIDTH + pad} ${height + (pad * 2)}" 
+         style="overflow: visible;">
+        <defs>
+            <filter id="glow" x="-20%" y="-50%" width="300%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feComposite in="blur" in2="SourceGraphic" operator="out" result="glowOnly" />
+                <feMerge>
+                    <feMergeNode in="glowOnly" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+        </defs>
+        <path d="${pathData}" 
+              fill="${starColor}" 
+              stroke="white" 
+              stroke-width="1" 
+              filter="url(#glow)" />
+    </svg>
+`;
+
+}
+
+
+
+
+scalingFactorSlider.addEventListener('input', update);
+tempSlider.addEventListener('input', updateTemp);
+update();
+</script>
+
+</body>
+</html>
