@@ -39,7 +39,7 @@ function generateRandomComposition(elements, threshold = null) {
         const item = elementsPool.pop();
 
         let contribution;
-        
+
         // 4. Determine the element's random contribution
         if (elementsPool.length === 0) {
             // If this is the last available item, it MUST take whatever is left.
@@ -49,14 +49,14 @@ function generateRandomComposition(elements, threshold = null) {
             // Safeguard: If remaining is less than 1.0, just take the remaining.
             const min = remainingTo100 > 1.0 ? 1.0 : remainingTo100;
             contribution = Math.random() * (remainingTo100 - min) + min;
-            
+
             // Round to 2 decimal places to keep the output clean
             contribution = roundTo(contribution);
         }
 
         // 5. Record the contribution and deduct it from the total
         composition[item] = contribution;
-        
+
         // Deduct and fix floating-point math issues
         remainingTo100 = Number((remainingTo100 - contribution).toFixed(2));
     }
@@ -69,7 +69,7 @@ function generateRandomComposition(elements, threshold = null) {
  *
  */
 function getUniformRandomBetween(min, max) {
-  return Math.random() * (max - min) + min;
+    return Math.random() * (max - min) + min;
 }
 
 
@@ -79,7 +79,7 @@ function getUniformRandomBetween(min, max) {
  * * @param {Array} pairs - Array of objects like { object: "Item", percentage: 10 }
  * @returns {*} The selected object
  */
-function getNormalizedWeightedRandom(pairs, key="frequency") {
+function getNormalizedWeightedRandom(pairs, key = "frequency") {
     if (!pairs || pairs.length === 0) return null;
 
     // 1. Calculate the actual sum of all provided percentages
@@ -88,7 +88,7 @@ function getNormalizedWeightedRandom(pairs, key="frequency") {
     // 2. Generate a random "dart" between 0 and the total weight
     // This effectively scales the 0-100 logic to 0-totalWeight
     const roll = Math.random() * totalWeight;
-    
+
     let cumulativeWeight = 0;
 
     // 3. Iterate and find where the roll lands
@@ -115,7 +115,7 @@ function getWeightedRandomFromObject(probDict) {
     if (!probDict || Object.keys(probDict).length === 0) return null;
 
     const entries = Object.entries(probDict);
-    
+
     // 1. Calculate total weight from values
     const totalWeight = entries.reduce((sum, [_, weight]) => sum + weight, 0);
 
@@ -176,11 +176,11 @@ function createNames(type = 'any', numerical_suffix = false) {
         "Andromeda": "Andromedae", "Antlia": "Antliae", "Apus": "Apodis", "Aquarius": "Aquarii", "Aquila": "Aquilae", "Ara": "Arae", "Aries": "Arietis", "Auriga": "Aurigae", "Bootes": "Bootis", "Caelum": "Caeli", "Camelopardalis": "Camelopardalis", "Cancer": "Cancri", "Canes Venatici": "Canum Venaticorum", "Canis Major": "Canis Majoris", "Canis Minor": "Canis Minoris", "Capricornus": "Capricorni", "Carina": "Carinae", "Cassiopeia": "Cassiopeiae", "Centaurus": "Centauri", "Cepheus": "Cephei", "Cetus": "Ceti", "Chamaeleon": "Chamaeleontis", "Circinus": "Circini", "Columba": "Columbae", "Coma Berenices": "Comae Berenices", "Corona Australis": "Coronae Australis", "Corona Borealis": "Coronae Borealis", "Corvus": "Corvi", "Crater": "Crateris", "Crux": "Crucis", "Cygnus": "Cygni", "Delphinus": "Delphini", "Dorado": "Doradus", "Draco": "Draconis", "Equuleus": "Equulei", "Eridanus": "Eridani", "Fornax": "Fornacis", "Gemini": "Geminorum", "Grus": "Gruis", "Hercules": "Herculis", "Horologium": "Horologii", "Hydra": "Hydrae", "Hydrus": "Hydri", "Indus": "Indi", "Lacerta": "Lacertae", "Leo": "Leonis", "Leo Minor": "Leonis Minoris", "Lepus": "Leporis", "Libra": "Librae", "Lupus": "Lupi", "Lynx": "Lyncis", "Lyra": "Lyrae", "Mensa": "Mensae", "Microscopium": "Microscopii", "Monoceros": "Monocerotis", "Musca": "Muscae", "Norma": "Normae", "Octans": "Octantis", "Ophiuchus": "Ophiuchi", "Orion": "Orionis", "Pavo": "Pavonis", "Pegasus": "Pegasi", "Perseus": "Persei", "Phoenix": "Phoenicis", "Pictor": "Pictoris", "Pisces": "Piscium", "Piscis Austrinus": "Piscis Austrini", "Puppis": "Puppis", "Pyxis": "Pyxidis", "Reticulum": "Reticuli", "Sagitta": "Sagittae", "Sagittarius": "Sagittarii", "Scorpius": "Scorpii", "Sculptor": "Sculptoris", "Scutum": "Scuti", "Serpens": "Serpentis", "Sextans": "Sextantis", "Taurus": "Tauri", "Telescopium": "Telescopii", "Triangulum": "Trianguli", "Tucana": "Tucanae", "Ursa Major": "Ursae Majoris", "Ursa Minor": "Ursae Minoris", "Vela": "Velorum", "Virgo": "Virginis", "Volans": "Volantis", "Vulpecula": "Vulpeculae"
     };
     const fake_map = {
-        "Eptesicus Minor": "Eptesici Minoris", "Achatina": "Achatinae", "Esox": "Esocis", 
-        "Acidalia": "Acidaliae", "Chilopoda Major": "Chilopodae Majoris", "Chlorocebus": "Chlorocebi", 
-        "Trochilidae": "Trochilidarum", "Ajaja": "Ajajae", "Tyto": "Tytonis", "Locodonta": "Locodontae", 
-        "Myotis": "Myotis", "Ailurus": "Ailuri", "Apis Major": "Apis Majoris", "Moloch": "Molochis", 
-        "Syncerus": "Synceri", "Viverra Australis": "Viverrae Australis", "Vespa": "Vespae", 
+        "Eptesicus Minor": "Eptesici Minoris", "Achatina": "Achatinae", "Esox": "Esocis",
+        "Acidalia": "Acidaliae", "Chilopoda Major": "Chilopodae Majoris", "Chlorocebus": "Chlorocebi",
+        "Trochilidae": "Trochilidarum", "Ajaja": "Ajajae", "Tyto": "Tytonis", "Locodonta": "Locodontae",
+        "Myotis": "Myotis", "Ailurus": "Ailuri", "Apis Major": "Apis Majoris", "Moloch": "Molochis",
+        "Syncerus": "Synceri", "Viverra Australis": "Viverrae Australis", "Vespa": "Vespae",
         "Tamias Occidentalis": "Tamiae Occidentalis", "Hester": "Hesteris", "Felis": "Felis", "Cichlidae": "Cichlidarum"
     };
     const greek_letters = [
@@ -195,11 +195,11 @@ function createNames(type = 'any', numerical_suffix = false) {
     let genitiveName = selectedMap[choice(Object.keys(selectedMap))];
     // 3. Optional Suffix (e.g., "A" or "1")
     let suffix = "";
-    if( numerical_suffix ) {
+    if (numerical_suffix) {
         const rand = Math.random();
         if (rand < 0.15) {
             suffix = ` ${Math.floor(Math.random() * 9) + 1}`; // e.g., " 1" to " 9"
-        } 
+        }
     }
     return `[${letter[1]}] ${letter[0]} - ${genitiveName}${suffix}`;
 }
@@ -324,18 +324,18 @@ console.log(processTokenString(100, units));
 */
 
 
-function km_to_AU( km ) {
-   return roundTo( km / CONSTANTS.KM_PER_AU)
+function km_to_AU(km) {
+    return roundTo(km / CONSTANTS.KM_PER_AU)
 }
 
 
-function km_to( km, factor ) {
-   return roundTo( km/factor)
+function km_to(km, factor) {
+    return roundTo(km / factor)
 }
 
 
-function mass_to( mass, factor ) {
-   return roundTo( mass/factor)
+function mass_to(mass, factor) {
+    return roundTo(mass / factor)
 }
 
 /**
@@ -346,11 +346,11 @@ function mass_to( mass, factor ) {
  * @returns {number} Der berechnete Wert
  */
 function lerp(start, end, t) {
-  return  start + t * (end - start);
+    return start + t * (end - start);
 }
 
 
-function fill_values_star( prefilled, template  ) {
+function fill_values_star(prefilled, template) {
     //prefilled = prefilled || {}
     //console.log( template )
     //console.log( prefilled)
@@ -358,63 +358,63 @@ function fill_values_star( prefilled, template  ) {
     //prefilled.class ??= template.class
     prefilled.type ??= template.type
     prefilled.code ??= template.code
-    prefilled.temp ??= getUniformRandomBetween( template.temp_range[MIN],  template.temp_range[MAX] )
-    prefilled.luminosity ??= getUniformRandomBetween( template.luminosity_range[MIN],  template.luminosity_range[MAX] ) * CONSTANTS.SUN_LUMINOSITY
-    
+    prefilled.temp ??= getUniformRandomBetween(template.temp_range[MIN], template.temp_range[MAX])
+    prefilled.luminosity ??= getUniformRandomBetween(template.luminosity_range[MIN], template.luminosity_range[MAX]) * CONSTANTS.SUN_LUMINOSITY
+
     //mass and radius arent independend
     interpolation_factor = getUniformRandomBetween(0, 1)
-    prefilled.mass ??= lerp( template.mass_range[MIN],  template.mass_range[MAX], interpolation_factor ) * CONSTANTS.SUN_MASS
-    prefilled.mass_sol ??= mass_to( prefilled.mass, CONSTANTS.SUN_MASS )
-    prefilled.radius ??= lerp( template.radius_range[MIN],  template.radius_range[MAX], interpolation_factor ) * CONSTANTS.SUN_RADIUS
-    prefilled.radius_in_sol_radii ??= km_to( prefilled.radius, CONSTANTS.SUN_RADIUS ) 
-    prefilled.density ??= prefilled.mass / ( (4/3) * Math.PI * Math.pow( prefilled.radius * CONSTANTS.CM_PER_KM, 3) )
+    prefilled.mass ??= lerp(template.mass_range[MIN], template.mass_range[MAX], interpolation_factor) * CONSTANTS.SUN_MASS
+    prefilled.mass_sol ??= mass_to(prefilled.mass, CONSTANTS.SUN_MASS)
+    prefilled.radius ??= lerp(template.radius_range[MIN], template.radius_range[MAX], interpolation_factor) * CONSTANTS.SUN_RADIUS
+    prefilled.radius_in_sol_radii ??= km_to(prefilled.radius, CONSTANTS.SUN_RADIUS)
+    prefilled.density ??= prefilled.mass / ((4 / 3) * Math.PI * Math.pow(prefilled.radius * CONSTANTS.CM_PER_KM, 3))
 
-    prefilled.roche_limit ??= rocheByDensity( prefilled.radius, prefilled.density, HIGH_DENSITY_PLANET)
-    prefilled.roche_limit_AU ??= km_to_AU( prefilled.roche_limit ) 
+    prefilled.roche_limit ??= rocheByDensity(prefilled.radius, prefilled.density, HIGH_DENSITY_PLANET)
+    prefilled.roche_limit_AU ??= km_to_AU(prefilled.roche_limit)
     prefilled.color ??= getRealisticStarColor(prefilled.temp)
     //for cepheids fill also the secondary values
-    if( prefilled.code === "V" ) {
+    if (prefilled.code === "V") {
         //
-        prefilled.pulsation_period ??= getUniformRandomBetween( template.pulsation_period_range[MIN],  template.pulsation_period_range[MAX])
+        prefilled.pulsation_period ??= getUniformRandomBetween(template.pulsation_period_range[MIN], template.pulsation_period_range[MAX])
         //overwrite luminosty depending on pulsation
-        prefilled.luminosity = template.luminosity_formula( prefilled.pulsation_period )
+        prefilled.luminosity = template.luminosity_formula(prefilled.pulsation_period)
 
         //, use the prefilled ones as min/max limits!
-        prefilled.temp_expanded ??= getUniformRandomBetween( template.temp_range[MIN],  prefilled.temp )
-        prefilled.luminosity_expanded ??= getUniformRandomBetween( template.temp_range[MIN],  prefilled.luminosity )
-        prefilled.radius_expanded ??= getUniformRandomBetween( prefilled.radius,  template.temp_range[MAX] )
+        prefilled.temp_expanded ??= getUniformRandomBetween(template.temp_range[MIN], prefilled.temp)
+        prefilled.luminosity_expanded ??= getUniformRandomBetween(template.temp_range[MIN], prefilled.luminosity)
+        prefilled.radius_expanded ??= getUniformRandomBetween(prefilled.radius, template.temp_range[MAX])
         prefilled.color_expanded ??= getRealisticStarColor(prefilled.temp_expanded)
     }
     return prefilled
 }
 
 
-function calculateSystemBoundaries( star1, star2=null) {
-            limits = {}
-            total_lum = star1.luminosity
-            total_lum += star2?.luminosity || 0
+function calculateSystemBoundaries(star1, star2 = null) {
+    limits = {}
+    total_lum = star1.luminosity
+    total_lum += star2?.luminosity || 0
 
-            limits = calculateStellarThermalBoundaries( total_lum )
+    limits = calculateStellarThermalBoundaries(total_lum)
 
-            roche_limit_star1 = rocheByDensity(star1.radius, star1.density, HIGH_DENSITY_PLANET, isFluid = false)
-            roche_limit_rigid_system = roche_limit_star1
-            inner_stable_orbit = roche_limit_rigid_system
-            max_orbital_distance = calculateMaxOrbitalDistance( star1.mass )
+    roche_limit_star1 = rocheByDensity(star1.radius, star1.density, HIGH_DENSITY_PLANET, isFluid = false)
+    roche_limit_rigid_system = roche_limit_star1
+    inner_stable_orbit = roche_limit_rigid_system
+    max_orbital_distance = calculateMaxOrbitalDistance(star1.mass)
 
-            if( star2 ) {
-               roche_limit_star2 = rocheByDensity(star2.radius, star2.density, HIGH_DENSITY_PLANET, isFluid = false)
-               roche_limit_rigid_system = Math.max( roche_limit_star1, roche_limit_star2)
-               inner_stable_orbit = calculateCriticalOrbit( star1.mass, star2.mass, star1.barycenter_distance + star2.barycenter_distance)
-               max_orbital_distance = calculateMaxOrbitalDistance( star1.mass + star2.mass )
-            }
+    if (star2) {
+        roche_limit_star2 = rocheByDensity(star2.radius, star2.density, HIGH_DENSITY_PLANET, isFluid = false)
+        roche_limit_rigid_system = Math.max(roche_limit_star1, roche_limit_star2)
+        inner_stable_orbit = calculateCriticalOrbit(star1.mass, star2.mass, star1.barycenter_distance + star2.barycenter_distance)
+        max_orbital_distance = calculateMaxOrbitalDistance(star1.mass + star2.mass)
+    }
 
-            limits.rocheLimitRigid = roche_limit_rigid_system
-            limits.innermostStableOrbit = inner_stable_orbit
-            limits.outermostStableOrbit = max_orbital_distance
+    limits.rocheLimitRigid = roche_limit_rigid_system
+    limits.innermostStableOrbit = inner_stable_orbit
+    limits.outermostStableOrbit = max_orbital_distance
 
-	    limits.rocheLimitRigidAU = km_to_AU( limits.rocheLimitRigid )
-	    limits.innermostStableOrbitAU = km_to_AU( limits.innermostStableOrbit )
-	    limits.outermostStableOrbitAU = km_to_AU( limits.outermostStableOrbit.stableLimitKM )
+    limits.rocheLimitRigidAU = km_to_AU(limits.rocheLimitRigid)
+    limits.innermostStableOrbitAU = km_to_AU(limits.innermostStableOrbit)
+    limits.outermostStableOrbitAU = km_to_AU(limits.outermostStableOrbit.stableLimitKM)
 
-            return limits
+    return limits
 }

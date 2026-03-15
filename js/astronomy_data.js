@@ -3,8 +3,8 @@
  * Provides physical constants and likelihood weights.
  */
 
-const  MIN =  0 // in ranges
-const  MAX = 1
+const MIN = 0 // in ranges
+const MAX = 1
 
 const CONSTANTS = {
     G: 6.67430e-11,
@@ -25,9 +25,9 @@ const CONSTANTS = {
     SUN_LUMINOSITY: 3.828e26,
     SUN_RADIUS: 695700,
 
-    MASS_JUPITER: 1.898e27, 
-    MASS_EARTH:   5.972e24,
-    MASS_MOON:    7.346e22
+    MASS_JUPITER: 1.898e27,
+    MASS_EARTH: 5.972e24,
+    MASS_MOON: 7.346e22
 };
 
 
@@ -99,55 +99,58 @@ HIGH_DENSITY_PLANET = 6 //g/cm^3
 
 const GAS_PROPERTIES = {
     // --- Primordial / Light ---
-    "Hydrogen":       { molarMass: 2.016,  freeze: 14.01,  boil: 20.28,  weight: 100, symbol: "H2" },
-    "Helium":         { molarMass: 4.002,  freeze: 0.95,   boil: 4.22,   weight: 85,  symbol: "He" },
-    
+    "Hydrogen": { molarMass: 2.016, freeze: 14.01, boil: 20.28, weight: 100, symbol: "H2" },
+    "Helium": { molarMass: 4.002, freeze: 0.95, boil: 4.22, weight: 85, symbol: "He" },
+
     // --- Common Volatiles (Biogenic & Atmospheric) ---
-    "Methane":        { molarMass: 16.04,  freeze: 90.7,   boil: 111.6,  weight: 40,  symbol: "CH4" },
-    "Ammonia":        { molarMass: 17.03,  freeze: 195.4,  boil: 239.8,  weight: 25,  symbol: "NH3" },
-    "Water Vapor":    { molarMass: 18.01,  freeze: 273.15, boil: 373.15, weight: 60,  symbol: "H2O" },
-    "Neon":           { molarMass: 20.18,  freeze: 24.56,  boil: 27.07,  weight: 15,  symbol: "Ne" },
-    "Nitrogen":       { molarMass: 28.01,  freeze: 63.15,  boil: 77.36,  weight: 80,  symbol: "N2" },
-    "Oxygen":         { molarMass: 32.00,  freeze: 54.36,  boil: 90.20,  weight: 50,  symbol: "O2" },
-    
+    "Methane": { molarMass: 16.04, freeze: 90.7, boil: 111.6, weight: 40, symbol: "CH4" },
+    "Ammonia": { molarMass: 17.03, freeze: 195.4, boil: 239.8, weight: 25, symbol: "NH3" },
+    "Water Vapor": { molarMass: 18.01, freeze: 273.15, boil: 373.15, weight: 60, symbol: "H2O" },
+    "Neon": { molarMass: 20.18, freeze: 24.56, boil: 27.07, weight: 15, symbol: "Ne" },
+    "Nitrogen": { molarMass: 28.01, freeze: 63.15, boil: 77.36, weight: 80, symbol: "N2" },
+    "Oxygen": { molarMass: 32.00, freeze: 54.36, boil: 90.20, weight: 50, symbol: "O2" },
+
     // --- Volcanic & Geologic ---
-    "Carbon Monoxide":{ molarMass: 28.01,  freeze: 68.15,  boil: 81.65,  weight: 45,  symbol: "CO" },
-    "Carbon Dioxide": { molarMass: 44.01,  freeze: 194.7,  boil: 216.6,  weight: 75,  symbol: "CO2" },
-    "Nitrous Oxide":  { molarMass: 44.01,  freeze: 182.3,  boil: 184.7,  weight: 5,   symbol: "N2O" },
-    "Hydrogen Sulfide":{ molarMass: 34.08, freeze: 187.6,  boil: 212.8,  weight: 20,  symbol: "H2S" },
-    "Sulfur Dioxide": { molarMass: 64.06,  freeze: 197.6,  boil: 263.1,  weight: 15,  symbol: "SO2" },
-    "Hydrogen Chloride":{ molarMass: 36.46, freeze: 158.9, boil: 188.1,  weight: 10,  symbol: "HCl" },
+    "Carbon Monoxide": { molarMass: 28.01, freeze: 68.15, boil: 81.65, weight: 45, symbol: "CO" },
+    "Carbon Dioxide": { molarMass: 44.01, freeze: 194.7, boil: 216.6, weight: 75, symbol: "CO2" },
+    "Nitrous Oxide": { molarMass: 44.01, freeze: 182.3, boil: 184.7, weight: 5, symbol: "N2O" },
+    "Hydrogen Sulfide": { molarMass: 34.08, freeze: 187.6, boil: 212.8, weight: 20, symbol: "H2S" },
+    "Sulfur Dioxide": { molarMass: 64.06, freeze: 197.6, boil: 263.1, weight: 15, symbol: "SO2" },
+    "Hydrogen Chloride": { molarMass: 36.46, freeze: 158.9, boil: 188.1, weight: 10, symbol: "HCl" },
 
     // --- Heavy / Noble / Exotic ---
-    "Argon":          { molarMass: 39.95,  freeze: 83.8,   boil: 87.3,   weight: 20,  symbol: "Ar" },
-    "Krypton":        { molarMass: 83.80,  freeze: 115.7,  boil: 119.9,  weight: 5,   symbol: "Kr" },
-    "Xenon":          { molarMass: 131.29, freeze: 161.4,  boil: 165.0,  weight: 2,   symbol: "Xe" },
-    "Radon":          { molarMass: 222.0,  freeze: 202.0,  boil: 211.3,  weight: 1,   symbol: "Rn" },
-    
+    "Argon": { molarMass: 39.95, freeze: 83.8, boil: 87.3, weight: 20, symbol: "Ar" },
+    "Krypton": { molarMass: 83.80, freeze: 115.7, boil: 119.9, weight: 5, symbol: "Kr" },
+    "Xenon": { molarMass: 131.29, freeze: 161.4, boil: 165.0, weight: 2, symbol: "Xe" },
+    "Radon": { molarMass: 222.0, freeze: 202.0, boil: 211.3, weight: 1, symbol: "Rn" },
+
     // --- Organic / Hydrocarbons ---
-    "Ethane":         { molarMass: 30.07,  freeze: 90.3,   boil: 184.5,  weight: 10,  symbol: "C2H6" },
-    "Ethylene":       { molarMass: 28.05,  freeze: 104.0,  boil: 169.4,  weight: 8,   symbol: "C2H4" },
-    "Acetylene":      { molarMass: 26.04,  freeze: 192.4,  boil: 189.1,  weight: 5,   symbol: "C2H2" },
-    
+    "Ethane": { molarMass: 30.07, freeze: 90.3, boil: 184.5, weight: 10, symbol: "C2H6" },
+    "Ethylene": { molarMass: 28.05, freeze: 104.0, boil: 169.4, weight: 8, symbol: "C2H4" },
+    "Acetylene": { molarMass: 26.04, freeze: 192.4, boil: 189.1, weight: 5, symbol: "C2H2" },
+
     // --- Corrosive / Reactive ---
-    "Fluorine":       { molarMass: 37.99,  freeze: 53.48,  boil: 85.03,  weight: 2,   symbol: "F2" },
-    "Chlorine":       { molarMass: 70.90,  freeze: 171.6,  boil: 239.1,  weight: 5,   symbol: "Cl2" }
+    "Fluorine": { molarMass: 37.99, freeze: 53.48, boil: 85.03, weight: 2, symbol: "F2" },
+    "Chlorine": { molarMass: 70.90, freeze: 171.6, boil: 239.1, weight: 5, symbol: "Cl2" }
 };
 
 const STAR_GRADIENT = [
-    { temp: 2000,  hex: "#ff3300" }, // Deep Red
-    { temp: 3500,  hex: "#ff8833" }, // Orange
-    { temp: 5500,  hex: "#ffffcc" }, // Pale Yellow (Sun-like)
-    { temp: 8000,  hex: "#ffffff" }, // Pure White
+    { temp: 0, hex: "#000000" }, // Black
+    { temp: 300, hex: "#502010" }, // Brown
+    { temp: 2000, hex: "#ff3300" }, // Deep Red
+    { temp: 3500, hex: "#ff8833" }, // Orange
+    { temp: 5500, hex: "#ffffcc" }, // Pale Yellow (Sun-like)
+    { temp: 8000, hex: "#ffffff" }, // Pure White
     { temp: 15000, hex: "#99ccff" }, // Light Blue
-    { temp: 30000, hex: "#5D7BFF" }  // Ultra-Hot Blue
+    { temp: 30000, hex: "#5D7BFF" },  // Ultra-Hot Blue
+    { temp: 150000, hex: "#ffffff" } // Pure White (again)
 ];
 
 
 
 const STELLAR_TYPES = {
     // --- MAIN SEQUENCE STARS ---
-    "O": {  
+    "O": {
         type: "BLUE_GIANT",
         class: "Blue Giant",
         code: "O",
@@ -155,11 +158,10 @@ const STELLAR_TYPES = {
         radius_range: [6.6, 20.0],
         luminosity_range: [30000, 1000000],
         temp_range: [30000, 50000],
-        color_range: ["#9bb0ff", "#aabfff"],
         possible_RLOF: true,
         frequency_percent: 0.00003
     },
-    "B": {       
+    "B": {
         type: "BLUE_WHITE",
         class: "Blue-White",
         code: "B",
@@ -167,11 +169,10 @@ const STELLAR_TYPES = {
         radius_range: [1.8, 6.6],
         luminosity_range: [25, 30000],
         temp_range: [10000, 30000],
-        color_range: ["#aabfff", "#cad7ff"],
         possible_RLOF: true,
         frequency_percent: 0.13
     },
-    "A": {       
+    "A": {
         type: "WHITE",
         class: "White",
         code: "A",
@@ -179,11 +180,10 @@ const STELLAR_TYPES = {
         radius_range: [1.4, 1.8],
         luminosity_range: [5, 25],
         temp_range: [7500, 10000],
-        color_range: ["#cad7ff", "#f8f7ff"],
         possible_RLOF: true,
         frequency_percent: 0.6
     },
-    "F": {       
+    "F": {
         type: "YELLOW_WHITE",
         class: "Yellow-White",
         code: "F",
@@ -191,7 +191,6 @@ const STELLAR_TYPES = {
         radius_range: [1.15, 1.4],
         luminosity_range: [1.5, 5],
         temp_range: [6000, 7500],
-        color_range: ["#f8f7ff", "#fff4ea"],
         possible_RLOF: true,
         frequency_percent: 3.0
     },
@@ -203,7 +202,6 @@ const STELLAR_TYPES = {
         radius_range: [0.96, 1.15],
         luminosity_range: [0.6, 1.5],
         temp_range: [5200, 6000],
-        color_range: ["#fff4ea", "#fff1e0"],
         possible_RLOF: false,
         frequency_percent: 7.6
     },
@@ -215,7 +213,6 @@ const STELLAR_TYPES = {
         radius_range: [0.7, 0.96],
         luminosity_range: [0.08, 0.6],
         temp_range: [3700, 5200],
-        color_range: ["#ffd2a1", "#ffcc6f"],
         possible_RLOF: false,
         frequency_percent: 12.1
     },
@@ -227,7 +224,6 @@ const STELLAR_TYPES = {
         radius_range: [0.1, 0.7],
         luminosity_range: [0.0001, 0.08],
         temp_range: [2400, 3700],
-        color_range: ["#ffcc6f", "#ffad5e"],
         possible_RLOF: false,
         frequency_percent: 76.45
     },
@@ -239,7 +235,6 @@ const STELLAR_TYPES = {
         radius_range: [10, 50],
         luminosity_range: [0.0001, 0.08],
         temp_range: [2400, 3700],
-        color_range: ["#ffcc6f", "#ffad5e"],
         possible_RLOF: true,
         frequency_percent: 76.45
     },
@@ -253,7 +248,6 @@ const STELLAR_TYPES = {
         radius_range: [0.08, 0.12], // Roughly Jupiter sized
         luminosity_range: [0.00001, 0.0001],
         temp_range: [300, 2400],
-        color_range: ["#ff4500", "#502010"],
         possible_RLOF: false,
         frequency_percent: 1.5 // Estimated relative to stars
     },
@@ -265,7 +259,6 @@ const STELLAR_TYPES = {
         radius_range: [0.008, 0.02], // Roughly Earth sized
         luminosity_range: [0.0001, 0.01],
         temp_range: [4000, 150000],
-        color_range: ["#ffffff", "#e0efff"],
         possible_RLOF: false,
         frequency_percent: 0.4
     },
@@ -277,7 +270,6 @@ const STELLAR_TYPES = {
         radius_range: [30.0, 100.0], // Large yellow supergiants
         luminosity_range: [1e-6, 1.0], // Initial heat is high, but surface area is tiny
         temp_range: [5000, 6500],      // They sit in a very specific temp window
-        color_range: ["#ffcc66", "#ffffcc"], // Yellow to Pale Yellow
         pulsation_period_range: [1.0, 100.0], // Days
         luminosity_formula: (period) => Math.pow(10, 1.25 * Math.log10(period) + 2.3),
         possible_RLOF: false,
@@ -291,7 +283,6 @@ const STELLAR_TYPES = {
         radius_range: [0.000014, 0.00002], // ~20km across
         luminosity_range: [1e-6, 1.0], // Initial heat is high, but surface area is tiny
         temp_range: [500000, 1000000],
-        color_range: ["#b0c4de", "#ffffff"],
         possible_RLOF: false,
         frequency_percent: 0.05
     },
@@ -303,7 +294,6 @@ const STELLAR_TYPES = {
         radius_range: [0.000014, 0.00002],
         luminosity_range: [0.01, 100], // High "apparent" luminosity due to beams
         temp_range: [500000, 1000000],
-        color_range: ["#dae9ff", "#ffffff"],
         possible_RLOF: false,
         frequency_percent: 0.01
     },
@@ -315,7 +305,6 @@ const STELLAR_TYPES = {
         radius_range: [0.000006, 0.0001], // Schwarzschild radius (event horizon)
         luminosity_range: [0, 0], // Accretion disk not included
         temp_range: [0, 0], // Hawking radiation is negligible
-        color_range: ["#000000", "#000000"],
         possible_RLOF: false,
         frequency_percent: 0.002
     }
@@ -325,10 +314,10 @@ const STELLAR_TYPES = {
 
 // DISTRIBUTIONS OF BINARY SYSTEM
 DISTRIBUTION_BINARY_TYPE = {
-   SINGLE_STAR: 0.6,
-   DETACHED_BINARY: 0.2,
-   SEMI_DETACHED_BINARY: 0.1,
-   CONTACT_BINARY: 0.1
+    SINGLE_STAR: 0.6,
+    DETACHED_BINARY: 0.2,
+    SEMI_DETACHED_BINARY: 0.1,
+    CONTACT_BINARY: 0.1
 }
 
 
@@ -336,8 +325,8 @@ DISTRIBUTION_BINARY_TYPE = {
 // NOTE: for Contact Binaries this list needs to be filtered!
 DISTRIBUTION_STAR_TYPE = {
     //special in summe 0.25
-    BLACK_HOLE:   0.05,
-    PULSAR:       0.05,
+    BLACK_HOLE: 0.05,
+    PULSAR: 0.05,
     NEUTRON_STAR: 0.10,
     CEPHEID_VARIABLE: 0.05,
     //dwarfs in summe 0.25
@@ -352,7 +341,7 @@ DISTRIBUTION_STAR_TYPE = {
     B: 0.05,
     //giants in summe 0.25
     O: 0.10,
-    M_III: 0.15 
+    M_III: 0.15
 }
 
 // DISTRIBUTION OF ORBITAL-TYPE
@@ -372,34 +361,34 @@ DISTRIBUTION_PLANETS = {
 
 
 const PLANET_TYPES = {
-     GAS_GIANT: {
-         mass_range: [ 0.01 * CONSTANTS.MASS_JUPITER, 13* CONSTANTS.MASS_JUPITER],
-         density_range: [0.05, 0.5]   //g per cm`3  
-     },
-     ICE_GIANT: {
-         mass_range: [ 10 * CONSTANTS.MASS_EARTH, 60 * CONSTANTS.MASS_EARTH],
-         density_range: [1.2, 2.5]
-     },
-     TERRESTIAL_PLANET: {
-          mass_range: [0.01 * CONSTANTS.MASS_EARTH, 10 * CONSTANTS.MASS_EARTH],
-          density_range: [3.0, 10.0 ]
-     },
-     DWARF_PLANET: {
-         mass_range:    [0.001*CONSTANTS.MASS_MOON, 0.25*CONSTANTS.MASS_MOON],
-         density_range: [1.5, 3.0],
-     },
-     
+    GAS_GIANT: {
+        mass_range: [0.01 * CONSTANTS.MASS_JUPITER, 13 * CONSTANTS.MASS_JUPITER],
+        density_range: [0.05, 0.5]   //g per cm`3  
+    },
+    ICE_GIANT: {
+        mass_range: [10 * CONSTANTS.MASS_EARTH, 60 * CONSTANTS.MASS_EARTH],
+        density_range: [1.2, 2.5]
+    },
+    TERRESTIAL_PLANET: {
+        mass_range: [0.01 * CONSTANTS.MASS_EARTH, 10 * CONSTANTS.MASS_EARTH],
+        density_range: [3.0, 10.0]
+    },
+    DWARF_PLANET: {
+        mass_range: [0.001 * CONSTANTS.MASS_MOON, 0.25 * CONSTANTS.MASS_MOON],
+        density_range: [1.5, 3.0],
+    },
 
-     
+
+
 };
 
 // DISTRIBUTION OF PLANET-TYPES
 DISTRIBUTION_PLANET_TYPE = {
-    DWARF:       0.5,
-    TERRESTIAL:  0.2,
+    DWARF: 0.5,
+    TERRESTIAL: 0.2,
     SUPER_EARTH: 0.1,
-    ICE_GIANT:   0.1,
-    GAS_GIANT:   0.1
+    ICE_GIANT: 0.1,
+    GAS_GIANT: 0.1
 }
 
 // example

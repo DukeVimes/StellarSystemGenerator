@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Star System Generator</title>
@@ -7,299 +8,304 @@
     <script src="./js/astronomy_data.js"></script>
     <script src="./js/astronomy_functions.js"></script>
     <script src="./js/helper_functions.js"></script>
-    <script src="./js/gui.js"></script>   
+    <script src="./js/gui.js"></script>
     <script src="./js/generate.js"></script>
-    <script src="./js/visualization_star.js"></script>    
-    <script src="./js/visualization_planet.js"></script>    
+    <script src="./js/visualization_star.js"></script>
+    <script src="./js/visualization_planet.js"></script>
     <script src="./js/visualization_system.js"></script>
     <link rel="stylesheet" href="./css/system_generator_gui.css">
     <link rel="stylesheet" href="./css/system_map.css">
 </head>
+
 <body>
     <div id="waitOverlay"></div>
     <div class="container">
-    <div class="sidebar">
-        <label>System Type</label>
-        <select id="systemType">
-            <option value="RANDOM">-- RANDOM --
-            <option value="SINGLE_STAR">Single Star
-            <option value="DETACHED_BINARY">detached binary
-            <option value="SEMI_DETACHED_BINARY">semi detached binary            
-            <option value="CONTACT_BINARY">contact binary
-        </select>
+        <div class="sidebar">
+            <label>System Type</label>
+            <select id="systemType">
+                <option value="RANDOM">-- RANDOM --
+                <option value="SINGLE_STAR">Single Star
+                <option value="DETACHED_BINARY">detached binary
+                <option value="SEMI_DETACHED_BINARY">semi detached binary
+                <option value="CONTACT_BINARY">contact binary
+            </select>
 
-        <label>Primary Star</label>
-        <select id="star1">
-            <option value="RANDOM">-- RANDOM --
-            <option value="O">Blue Giant (O)
-            <option value="B">Blue-White (B)
-            <option value="W">White (W)           
-            <option value="F">Yellow-White (F)
-            <option value="G">Yellow Dwarf / Sun-Like (G)
-            <option value="K">Orange Dwarf (K)
-            <option value="M">Red Dwarf (M)         
-            <option value="M_III">Red Giant (M III)           
-            <option value="BROWN_DWARF">Brown Dwarf (Y/L/T)         
-            <option value="WHITE_DWARF">White Dwarf           
-            <option value="CEPHEID_VARIABLE">Variable Star (Cepheid)          
-            <option value="NEUTRON_STAR">Neutron Star       
-            <option value="PULSAR">Pulsar       
-            <option value="BLACK_HOLE">Stellar mass Black Hole
-        </select>
+            <label>Primary Star</label>
+            <select id="star1">
+                <option value="RANDOM">-- RANDOM --
+                <option value="O">Blue Giant (O)
+                <option value="B">Blue-White (B)
+                <option value="W">White (W)
+                <option value="F">Yellow-White (F)
+                <option value="G">Yellow Dwarf / Sun-Like (G)
+                <option value="K">Orange Dwarf (K)
+                <option value="M">Red Dwarf (M)
+                <option value="M_III">Red Giant (M III)
+                <option value="BROWN_DWARF">Brown Dwarf (Y/L/T)
+                <option value="WHITE_DWARF">White Dwarf
+                <option value="CEPHEID_VARIABLE">Variable Star (Cepheid)
+                <option value="NEUTRON_STAR">Neutron Star
+                <option value="PULSAR">Pulsar
+                <option value="BLACK_HOLE">Stellar mass Black Hole
+            </select>
 
-        <label>Companion Star</label>
-        <select id="star2">
-            <option value="RANDOM">-- RANDOM --
-            <option value="NONE">-- NONE --
-            <option value="O">Blue Giant (O)
-            <option value="B">Blue-White (B)
-            <option value="W">White (W)           
-            <option value="F">Yellow-White (F)
-            <option value="G">Yellow Dwarf / Sun-Like (G)
-            <option value="K">Orange Dwarf (K)
-            <option value="M">Red Dwarf (M)         
-            <option value="M_III">Red Giant (M III)           
-            <option value="BROWN_DWARF">Brown Dwarf   (Y/L/T)         
-            <option value="WHITE_DWARF">White Dwarf           
-            <option value="CEPHEID_VARIABLE">Variable Star (Cepheid)          
-            <option value="NEUTRON_STAR">Neutron Star       
-            <option value="PULSAR">Pulsar       
-            <option value="BLACK_HOLE">Stellar mass Black Hole
-        </select>
+            <label>Companion Star</label>
+            <select id="star2">
+                <option value="RANDOM">-- RANDOM --
+                <option value="NONE">-- NONE --
+                <option value="O">Blue Giant (O)
+                <option value="B">Blue-White (B)
+                <option value="W">White (W)
+                <option value="F">Yellow-White (F)
+                <option value="G">Yellow Dwarf / Sun-Like (G)
+                <option value="K">Orange Dwarf (K)
+                <option value="M">Red Dwarf (M)
+                <option value="M_III">Red Giant (M III)
+                <option value="BROWN_DWARF">Brown Dwarf (Y/L/T)
+                <option value="WHITE_DWARF">White Dwarf
+                <option value="CEPHEID_VARIABLE">Variable Star (Cepheid)
+                <option value="NEUTRON_STAR">Neutron Star
+                <option value="PULSAR">Pulsar
+                <option value="BLACK_HOLE">Stellar mass Black Hole
+            </select>
 
-        <label>Planet Count (0-99, -1 = random)</label>
-        <input type="number" id="orbits" placeholder="" value="-1" min=-1 max=200>
+            <label>Planet Count (0-99, -1 = random)</label>
+            <input type="number" id="orbits" placeholder="" value="-1" min=-1 max=200>
 
-        <label>JSON Template Overrides</label>
-        <textarea id="template" placeholder='{}' style="height: 50px;"></textarea>
+            <label>JSON Template Overrides</label>
+            <textarea id="template" placeholder='{}' style="height: 50px;"></textarea>
 
-        <label>Seed</label>
-        <input type=text id="seed" class="digest-area">
+            <label>Seed</label>
+            <input type=text id="seed" class="digest-area">
 
-        <button id='btnGenerate' onClick='generateSystemClicked()'>Generate System</button>  
-    </div>
-    
-    <div class="main">
-       <div class="tabs">
-          <button class="tab-btn active" onclick="openTab(event, 'mapView')">System Map</button>
-          <button class="tab-btn" onclick="openTab(event, 'dataView')">Data View</button>         
-          <button class="tab-btn" onclick="openTab(event, 'settingsView')">Settings</button>     
-          <button class="tab-btn" onclick="openTab(event, 'documentationView')">Documentation</button>
-       </div>
+            <button id='btnGenerate' onClick='generateSystemClicked()'>Generate System</button>
+        </div>
 
-       <div id="dataView" class="tab-content">
-         <textarea id="output" class="output-box"></textarea>
-       </div>
-
-       <div id="mapView" class="tab-content">  
-            <div id="svgWrapper"></div>
-       </div>
-
-       <div id="settingsView" class="tab-content">  
-          <div class="container">
-              <div class="sidebar">
-               <form id="settingsForm">
-               <label>SVG-width</label>
-               <input name="svgWidth" type=number value=1920><br>
-
-               <label>SVG-height</label>
-               <input name="svgHeight" type=number value=1080><br>
-
-               <label>distribute Planets</label>
-               <select name="orbitDistribution">
-                   <option value="equally" selected>equally spaced</option>
-                   <option value="logarithmic" disabled>logarithmic
-               </select><br>
-
-               <label>System lines and areas</label><br>
-               <input name="showHabitableZone" type=checkbox checked>show Habitable Zone </input><br>             
-               <input name="showFrostLine" type=checkbox checked>show Frost Line</input><br>              
-               <input name="showInnermostStableOrbit" type=checkbox checked>show innermost stable Orbit</input><br>              
-               <input name="showEcliptic" type=checkbox checked>show ecliptic</input><br>                
-               <input name="showBarycenter" type=checkbox checked>show barycenter</input><br>              
-               <input name="showEccentricity" type=checkbox checked>show eccentricity</input><br>              
-               <input name="showDistanceScale" type=checkbox checked>show distance scale</input><br>            
-               <input name="showOrbitalResonance" type=checkbox checked>show orbital resonance</input><br>
-               <input name="showDesignation" type=checkbox checked>show designation</input><br>
-
-               <label>Planetary bodies</label><br>
-               <input type=checkbox checked>show axis of rotation</input><br>              
-               <input type=checkbox checked>show tidal lock</input><br>          
-               <input type=checkbox checked>show trojans</input><br> 
-
-	       <label>minimum radius for display (km)</label>
-               <input name="minimumRadiusForDisplay" type=number value=250>
-               </form>
+        <div class="main">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'mapView')">System Map</button>
+                <button class="tab-btn" onclick="openTab(event, 'dataView')">Data View</button>
+                <button class="tab-btn" onclick="openTab(event, 'settingsView')">Settings</button>
+                <button class="tab-btn" onclick="openTab(event, 'documentationView')">Documentation</button>
             </div>
-          </div>
-       </div>
 
-       <div id="documentationView" class="tab-content">  
-            <h1>Documentation</h1>
-            <h2>Purpose</h2>
-            <p>This Stellar System Generator primarily aims to build a JSON-File describing the generated system.
-               In a second step the generated description is visualized as a system diagram. The diagram is not to scale and
-               its purpose is to give rather a technical overview of astronomical data (e.g. rotation axis, tidal lock, etc.)
-               than a photographic render with textures.
-            </p>
-            <p>If provided, the generator will populate a template-file with missing values. This way the output of the generator 
-               is highly customizable.
-            <h2>central bodies</h2>
-            <h2>system boundaries</h2>
-            <h2>orbital regions</h2>
-            <h2>dwarf planets
-            <h2>planets</h2>
-            <h2>double planets</h2>
-       </div>
-    </div>
+            <div id="dataView" class="tab-content">
+                <textarea id="output" class="output-box"></textarea>
+            </div>
 
-    <script>
+            <div id="mapView" class="tab-content">
+                <div id="svgWrapper"></div>
+            </div>
+
+            <div id="settingsView" class="tab-content">
+                <div class="container">
+                    <div class="sidebar">
+                        <form id="settingsForm">
+                            <label>SVG-width</label>
+                            <input name="svgWidth" type=number value=1920><br>
+
+                            <label>SVG-height</label>
+                            <input name="svgHeight" type=number value=1080><br>
+
+                            <label>distribute Planets</label>
+                            <select name="orbitDistribution">
+                                <option value="equally" selected>equally spaced</option>
+                                <option value="logarithmic" disabled>logarithmic
+                            </select><br>
+
+                            <label>System lines and areas</label><br>
+                            <input name="showHabitableZone" type=checkbox checked>show Habitable Zone </input><br>
+                            <input name="showFrostLine" type=checkbox checked>show Frost Line</input><br>
+                            <input name="showInnermostStableOrbit" type=checkbox checked>show innermost stable
+                            Orbit</input><br>
+                            <input name="showEcliptic" type=checkbox checked>show ecliptic</input><br>
+                            <input name="showBarycenter" type=checkbox checked>show barycenter</input><br>
+                            <input name="showEccentricity" type=checkbox checked>show eccentricity</input><br>
+                            <input name="showDistanceScale" type=checkbox checked>show distance scale</input><br>
+                            <input name="showOrbitalResonance" type=checkbox checked>show orbital resonance</input><br>
+                            <input name="showDesignation" type=checkbox checked>show designation</input><br>
+
+                            <label>Planetary bodies</label><br>
+                            <input type=checkbox checked>show axis of rotation</input><br>
+                            <input type=checkbox checked>show tidal lock</input><br>
+                            <input type=checkbox checked>show trojans</input><br>
+
+                            <label>minimum radius for display (km)</label>
+                            <input name="minimumRadiusForDisplay" type=number value=250>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="documentationView" class="tab-content">
+                <h1>Documentation</h1>
+                <h2>Purpose</h2>
+                <p>This Stellar System Generator primarily aims to build a JSON-File describing the generated system.
+                    In a second step the generated description is visualized as a system diagram. The diagram is not to
+                    scale and
+                    its purpose is to give rather a technical overview of astronomical data (e.g. rotation axis, tidal
+                    lock, etc.)
+                    than a photographic render with textures.
+                </p>
+                <p>If provided, the generator will populate a template-file with missing values. This way the output of
+                    the generator
+                    is highly customizable.
+                <h2>central bodies</h2>
+                <h2>system boundaries</h2>
+                <h2>orbital regions</h2>
+                <h2>dwarf planets
+                    <h2>planets</h2>
+                    <h2>double planets</h2>
+            </div>
+        </div>
+
+        <script>
 
 
 
-function generateSystem( system_type, star1_type, star2_type, n_orbits, seed, template ) {
-
-          
-              seed = calculateRandomSeed()
-              params.seed = seed
-              setUrl( params )
-              setGui( params )
-              
+            function generateSystem(system_type, star1_type, star2_type, n_orbits, seed, template) {
 
 
-            system = {}
-            system.meta = {}
-            system_name = createNames('fake', false)
-            system.meta.designation =  system_name
-            system.meta.system_type = system_type
-            system.meta.number_of_orbits = n_orbits
-            //console.log(system)
-
-            stars = generateCentralBodies( star1_type, null, star2_type, null, system_type )
-            system.stars = stars
-            //console.log( "stars:" + stars)
+                seed = calculateRandomSeed()
+                params.seed = seed
+                setUrl(params)
+                setGui(params)
 
 
-            //now position distance from barycenter according to type and mass ratios...
-            setDistanceBarycenter( stars, system_type)
-            //console.log( stars )
 
-            // calculate system limits (hill sphere, combined roche limit, innermost stable orbit, frost limit, ...)
-            limits = calculateSystemBoundaries( ...stars )
-            system.boundaries = limits
-/*
-            orbits = distributePlanetsInnerBias(n_orbits, system.boundaries.innermostStableOrbit, system.boundaries.outermostStableOrbit.stableLimitKM, bias = 2.5)
-*/
-          
-            orbits = []
-            n_orbits_template = ( template.orbits || [] ).length
-            n_orbits = Math.max( n_orbits,n_orbits_template  )
-            
-            n_planets = 0
-            for( let i=1; i<=n_orbits; ++i ) {
-		orbit_template = {}
-                orbit_template.id ??= crypto.randomUUID();
-                if( i < n_orbits_template ) {
-                   orbit_template = template.orbits[i]
+                system = {}
+                system.meta = {}
+                system_name = createNames('fake', false)
+                system.meta.designation = system_name
+                system.meta.system_type = system_type
+                system.meta.number_of_orbits = n_orbits
+                //console.log(system)
+
+                stars = generateCentralBodies(star1_type, null, star2_type, null, system_type)
+                system.stars = stars
+                //console.log( "stars:" + stars)
+
+
+                //now position distance from barycenter according to type and mass ratios...
+                setDistanceBarycenter(stars, system_type)
+                //console.log( stars )
+
+                // calculate system limits (hill sphere, combined roche limit, innermost stable orbit, frost limit, ...)
+                limits = calculateSystemBoundaries(...stars)
+                system.boundaries = limits
+                /*
+                            orbits = distributePlanetsInnerBias(n_orbits, system.boundaries.innermostStableOrbit, system.boundaries.outermostStableOrbit.stableLimitKM, bias = 2.5)
+                */
+
+                orbits = []
+                n_orbits_template = (template.orbits || []).length
+                n_orbits = Math.max(n_orbits, n_orbits_template)
+
+                n_planets = 0
+                for (let i = 1; i <= n_orbits; ++i) {
+                    orbit_template = {}
+                    orbit_template.id ??= crypto.randomUUID();
+                    if (i < n_orbits_template) {
+                        orbit_template = template.orbits[i]
+                    }
+                    orbit_template.distance ??= roundTo(i * getUniformRandomBetween(0.5, 2) * CONSTANTS.KM_PER_AU, 0)
+
+                    orbit_content = getWeightedRandomFromObject(DISTRIBUTION_ORBIT_CONTENT)
+
+                    if (orbit_content === "PLANET") {
+                        n_planets += 1;
+                        designation = toRoman(n_planets)
+                        type = getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
+                        orbit_template.designation ??= designation
+                        orbit_template.type ??= type
+
+                        generatePlanet(orbit_template, PLANET_TYPES[type], system)
+                    }
+                    else {
+                        type = "BELT"
+                        designation = ""
+                        orbit_template.designation ??= designation
+                        orbit_template.type ??= type
+
+                    }
+
+                    orbits.push(orbit_template)
                 }
-		orbit_template.distance ??= roundTo( i*getUniformRandomBetween(0.5, 2)*CONSTANTS.KM_PER_AU, 0 ) 
-                
-                orbit_content = getWeightedRandomFromObject( DISTRIBUTION_ORBIT_CONTENT )
-                
-                if( orbit_content === "PLANET" ) {
-                   n_planets += 1;
-                   designation = toRoman(n_planets)
-                   type = getWeightedRandomFromObject( DISTRIBUTION_PLANETS )                
-                   orbit_template.designation ??= designation
-                   orbit_template.type ??= type
 
-                   generatePlanet( orbit_template, PLANET_TYPES[type], system )
-                }
-                else {
-                   type = "BELT"
-                   designation = ""
-                   orbit_template.designation ??= designation
-                   orbit_template.type ??= type
-                
-                }
-                
-                orbits.push( orbit_template )
+                system.orbits = orbits
+
+                document.getElementById('output').value = JSON.stringify(system, null, 4)
+
+
             }
 
-            system.orbits = orbits
 
-	document.getElementById('output').value = JSON.stringify( system, null, 4 )
+            function getCleanFormData(formElement) {
 
+                const cleanData = {};
+                new FormData(formElement).forEach((value, key) => {
+                    const input = formElement.querySelector(`[name="${key}"]`);
 
-}
+                    if (input.type === 'number' || input.type === 'range') {
+                        cleanData[key] = parseFloat(value);
+                    } else if (input.type === 'checkbox') {
+                        cleanData[key] = input.checked;
+                    } else {
+                        cleanData[key] = value;
+                    }
+                });
 
-
-function getCleanFormData(formElement) {
-
-const cleanData = {};
-new FormData(formElement).forEach((value, key) => {
-    const input = formElement.querySelector(`[name="${key}"]`);
-    
-    if (input.type === 'number' || input.type === 'range') {
-        cleanData[key] = parseFloat(value);
-    } else if (input.type === 'checkbox') {
-        cleanData[key] = input.checked;
-    } else {
-        cleanData[key] = value;
-    }
-});
-
-    return cleanData;
-}
+                return cleanData;
+            }
 
 
-function generateSystemClicked() {
-     systemType = params.systemType
-     if( systemType === "RANDOM" ) {
-        systemType = getWeightedRandomFromObject( DISTRIBUTION_BINARY_TYPE )
-     }
-     star1 = params.star1
-     if( star1 === "RANDOM" ) {
-        star1 = getWeightedRandomFromObject( DISTRIBUTION_STAR_TYPE )
-     }
-     star2 = params.star2
-     if( systemType === "SINGLE_STAR") {
-        star2 = null
-     }
-     if( star2 === "RANDOM" ) {
-        star2 = getWeightedRandomFromObject( DISTRIBUTION_STAR_TYPE )
-     }
-     orbits =  params.orbits
-     if( orbits < 0 ) {
-         orbits = Math.round( getUniformRandomBetween( 0, 50 ) );
-     }
+            function generateSystemClicked() {
+                systemType = params.systemType
+                if (systemType === "RANDOM") {
+                    systemType = getWeightedRandomFromObject(DISTRIBUTION_BINARY_TYPE)
+                }
+                star1 = params.star1
+                if (star1 === "RANDOM") {
+                    star1 = getWeightedRandomFromObject(DISTRIBUTION_STAR_TYPE)
+                }
+                star2 = params.star2
+                if (systemType === "SINGLE_STAR") {
+                    star2 = null
+                }
+                if (star2 === "RANDOM") {
+                    star2 = getWeightedRandomFromObject(DISTRIBUTION_STAR_TYPE)
+                }
+                orbits = params.orbits
+                if (orbits < 0) {
+                    orbits = Math.round(getUniformRandomBetween(0, 50));
+                }
 
-     settings = getCleanFormData( document.getElementById("settingsForm") )
-     console.log( JSON.stringify( settings ) )
-     showWait()
+                settings = getCleanFormData(document.getElementById("settingsForm"))
+                console.log(JSON.stringify(settings))
+                showWait()
 
 
-     generateSystem( systemType, star1, star2, orbits, params.seed, params.templateBase64 )
-     visualizeSystem( system, settings )     
-     openTab( null, "mapView")	
+                generateSystem(systemType, star1, star2, orbits, params.seed, params.templateBase64)
+                visualizeSystem(system, settings)
+                openTab(null, "mapView")
 
-     hideWait()
-}
+                hideWait()
+            }
 
 
 
-////////////////////////////////////////////////////////////////
-params = {}
+            ////////////////////////////////////////////////////////////////
+            params = {}
 
 
-///////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////
 
-       function init() {
-	    params = getUrlParameters()
-            setGui( params )
-       } 
-       window.onload = init;
-    </script>
+            function init() {
+                params = getUrlParameters()
+                setGui(params)
+            }
+            window.onload = init;
+        </script>
 
 </body>
 
