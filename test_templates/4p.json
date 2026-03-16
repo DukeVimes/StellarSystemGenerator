@@ -1,0 +1,14 @@
+{
+    "orbits": [
+        {},
+        {},
+        {
+            "type": "DWARF_PLANET",
+            "distance": "1 AU"
+        },
+        {
+            "type": "GAS_GIANT",
+            "distance": "5 AU"
+        }
+    ]
+}

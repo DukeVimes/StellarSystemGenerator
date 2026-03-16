@@ -19,7 +19,8 @@ function getUrlParameters() {
     params.orbits = urlParams.get("orbits") || -1
     params.seed = urlParams.get('seed')  //calculateRandomSeed()
 
-    params.templateBase64 = urlParams.get('templateBase64') || btoa(JSON.stringify({}))
+    params.templateBase64 = decodeURIComponent( urlParams.get('templateBase64') ) || btoa(JSON.stringify({}))
+    console.log( " params.templateBase64 (decoded):" +  params.templateBase64 )
     return params
 }
 
@@ -61,13 +62,14 @@ function setGui(params) {
     document.getElementById('star2').value = params.star2
     document.getElementById('orbits').value = params.orbits
     document.getElementById('seed').value = params.seed
-    document.getElementById('template').value = atob(params.templateBase64)
+    //console.log( "setGui template from url: " + params.templateBase64 )
+    document.getElementById('template').value = JSON.parse(atob(params.templateBase64))
 
     document.getElementById('systemType').addEventListener('change', function (event) { valueChange(event, params) })
     document.getElementById('star1').addEventListener('change', function (event) { valueChange(event, params) })
     document.getElementById('star2').addEventListener('change', function (event) { valueChange(event, params) })
     document.getElementById('orbits').addEventListener('change', function (event) { valueChange(event, params) })
-    document.getElementById('template').addEventListener('change', function (event) { valueChangeTamplate(event, params) })
+    document.getElementById('template').addEventListener('change', function (event) { valueChangeTemplate(event, params) })
 
 }
 
@@ -82,11 +84,15 @@ function valueChange(event, params) {
 }
 
 function valueChangeTemplate(event, params) {
+    alert("template changed")
     const changedElement = event.target
     const elementId = changedElement.id;
     newValue = changedElement.value
+    //console.log("template value:" + newValue)
 
-    params['templateBase64'] = atob(newValue)
+    //dont url encode because it will be encoded automatically
+    params['templateBase64'] =  /*encodeURIComponent*/(btoa(JSON.stringify(newValue))) 
+    //console.log( "params template64 for URL encoded: " + params['templateBase64'] )
     setUrl(params)
 }
 

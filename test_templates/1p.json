@@ -1,0 +1,171 @@
+{
+    "meta": {
+        "designation": "[lambda] λ - Felis",
+        "system_type": "SINGLE_STAR",
+        "number_of_orbits": 2
+    },
+    "stars": [
+        {
+            "type": "BLACK_HOLE",
+            "code": "S",
+            "temp": 0,
+            "luminosity": 0,
+            "mass": 6.522928182039347e+31,
+            "mass_sol": 32.8,
+            "radius": 45.64245548146618,
+            "radius_in_sol_radii": 0,
+            "density": 163774765301.1585,
+            "roche_limit": 335318.4155977513,
+            "roche_limit_AU": 0,
+            "color": "#000000",
+            "distance_barycenter": 1000
+        }
+    ],
+    "boundaries": {
+        "totalLuminosity": 0,
+        "totalLuminositySun": 0,
+        "frostLine": 0,
+        "frostLineAU": 0,
+        "habitableZone": {
+            "inner": 0,
+            "outer": 0,
+            "innerAU": 0,
+            "outerAU": 0
+        },
+        "rocheLimitRigid": 173156.23100539614,
+        "innermostStableOrbit": 173156.23100539614,
+        "outermostStableOrbit": {
+            "theoreticalLimitAU": 786269.35,
+            "stableLimitAU": 262089.78,
+            "theoreticalLimitKM": 117624220543602.7,
+            "stableLimitKM": 39208073514534.23
+        },
+        "rocheLimitRigidAU": 0,
+        "innermostStableOrbitAU": 0,
+        "outermostStableOrbitAU": 262089.78
+    },
+    "orbits": [
+        {
+            "id": "ebf15cb7-e22f-44e7-bf1b-ebe0b46ef286",
+            "distance": 106322905,
+            "designation": "I",
+            "type": "TERRESTIAL_PLANET",
+            "distanceAU": 0.71,
+            "mass": 7.386112822694102e+24,
+            "massReadable": "1.24 Earth",
+            "density": 3.859612957881839,
+            "radius": 7702,
+            "orbitalInclination": 15.69670961712722,
+            "axisTilt": 15.69670961712722,
+            "rotationPeriod": 138971.42335874782,
+            "rotationPeriodDays": "1.61 earth-days",
+            "isTidallyLocked": false,
+            "sattelites": [],
+            "escapeVelocity": 11314.21,
+            "avgTemp": {
+                "kelvin": 0,
+                "celsius": -273,
+                "fahrenheit": -460
+            },
+            "chemistry": {
+                "states": {
+                    "gas": [
+                        "Hydrogen",
+                        "Helium",
+                        "Methane",
+                        "Ammonia",
+                        "Water Vapor",
+                        "Neon",
+                        "Nitrogen",
+                        "Oxygen",
+                        "Carbon Monoxide",
+                        "Carbon Dioxide",
+                        "Nitrous Oxide",
+                        "Hydrogen Sulfide",
+                        "Sulfur Dioxide",
+                        "Hydrogen Chloride",
+                        "Argon",
+                        "Krypton",
+                        "Xenon",
+                        "Radon",
+                        "Ethane",
+                        "Ethylene",
+                        "Acetylene",
+                        "Fluorine",
+                        "Chlorine"
+                    ],
+                    "liquid": [],
+                    "solid": []
+                },
+                "atmosphere": {}
+            },
+            "hasAtmosphere": true,
+            "solarDay": {
+                "solarDayHours": null,
+                "siderealDayHours": 138971.42,
+                "isRetrogradeSpin": false
+            }
+        },
+        {
+            "id": "c885d832-4627-48a3-b177-57d5788f8f1c",
+            "distance": 207513834,
+            "designation": "II",
+            "type": "DWARF_PLANET",
+            "distanceAU": 1.39,
+            "mass": 6.078222089632411e+21,
+            "massReadable": "6.078222089632411e+21 kg",
+            "density": 1.9924212578300469,
+            "radius": 900,
+            "orbitalInclination": 3.593205188172166,
+            "axisTilt": 3.593205188172166,
+            "rotationPeriod": 307884.4639285339,
+            "rotationPeriodDays": "3.56 earth-days",
+            "isTidallyLocked": false,
+            "sattelites": [],
+            "escapeVelocity": 949.48,
+            "avgTemp": {
+                "kelvin": 0,
+                "celsius": -273,
+                "fahrenheit": -460
+            },
+            "chemistry": {
+                "states": {
+                    "gas": [
+                        "Hydrogen",
+                        "Helium",
+                        "Methane",
+                        "Ammonia",
+                        "Water Vapor",
+                        "Neon",
+                        "Nitrogen",
+                        "Oxygen",
+                        "Carbon Monoxide",
+                        "Carbon Dioxide",
+                        "Nitrous Oxide",
+                        "Hydrogen Sulfide",
+                        "Sulfur Dioxide",
+                        "Hydrogen Chloride",
+                        "Argon",
+                        "Krypton",
+                        "Xenon",
+                        "Radon",
+                        "Ethane",
+                        "Ethylene",
+                        "Acetylene",
+                        "Fluorine",
+                        "Chlorine"
+                    ],
+                    "liquid": [],
+                    "solid": []
+                },
+                "atmosphere": {}
+            },
+            "hasAtmosphere": true,
+            "solarDay": {
+                "solarDayHours": null,
+                "siderealDayHours": 307884.46,
+                "isRetrogradeSpin": false
+            }
+        }
+    ]
+}

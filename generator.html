@@ -148,8 +148,7 @@
                     than a photographic render with textures.
                 </p>
                 <p>If provided, the generator will populate a template-file with missing values. This way the output of
-                    the generator
-                    is highly customizable.
+                    the generator is highly customizable.
                 <h2>central bodies</h2>
                 <h2>system boundaries</h2>
                 <h2>orbital regions</h2>
@@ -164,7 +163,6 @@
 
 
             function generateSystem(system_type, star1_type, star2_type, n_orbits, seed, template) {
-
 
                 seed = calculateRandomSeed()
                 params.seed = seed
@@ -279,16 +277,22 @@
                 if (orbits < 0) {
                     orbits = Math.round(getUniformRandomBetween(0, 50));
                 }
+                template = {}
+                if( params.templateBase64 ) {
+                    console.log(  params.templateBase64) 
+                    template_raw = atob( params.templateBase64 )
+                    template = convertUnitStrings(template_raw, UNITS)
+                }
+                
+                //seed
 
                 settings = getCleanFormData(document.getElementById("settingsForm"))
-                console.log(JSON.stringify(settings))
+                //console.log(JSON.stringify(settings))
+
                 showWait()
-
-
-                generateSystem(systemType, star1, star2, orbits, params.seed, params.templateBase64)
+                generateSystem(systemType, star1, star2, orbits, params.seed, template)
                 visualizeSystem(system, settings)
                 openTab(null, "mapView")
-
                 hideWait()
             }
 

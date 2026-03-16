@@ -505,19 +505,19 @@ function calculateEscapeVelocity(mass, radius) {
         alert("invalid radius")
         return 0
     }
-    console.log("Input Mass:", mass);
-    console.log("Input Radius:", radius);
-    console.log("G Constant:", CONSTANTS.G);
+    //console.log("Input Mass:", mass);
+    //console.log("Input Radius:", radius);
+    //console.log("G Constant:", CONSTANTS.G);
     // Calculate the parts separately
     const numerator = 2 * CONSTANTS.G * mass;
     const denominator = radius * 1000;
 
-    console.log("Numerator:", numerator);
+    //console.log("Numerator:", numerator);
 
     if (denominator === 0) return 0;
 
     const escV = Math.sqrt(numerator / denominator);
-    console.log("Result:", escV);
+    //console.log("Result:", escV);
 
     return escV
 }

@@ -31,6 +31,16 @@ const CONSTANTS = {
 };
 
 
+UNITS = {
+    AU: 149597871,
+    MASS_SUN: 1.9885e30,
+    MASS_JUPITER: 1.898e27,
+    MASS_EARTH: 5.972e24,
+    MASS_MOON: 7.346e22,
+    RADIUS_SUN: 695700
+}
+
+
 
 
 //diameter in km

@@ -171,6 +171,26 @@ function processTokenString(input, dictionary) {
 }
 
 
+function convertUnitStrings( unconverted, dictionary ) {
+
+    let converted = unconverted
+    Object.entries( unconverted ).forEach(([key, value]) => {
+        if( typeof value === 'string') {
+            converted.key = processTokenString(value, dictionary)
+        }
+        else if( typeof value === 'array') {
+            converted.key = map( (v) => { return convertUnitStrings(v, dictionary) } );
+        }
+        else if( typeof value === 'object') {
+           converted.key =  convertUnitStrings( unconverted.key, dictionary )
+        }
+
+    });
+    return converted
+
+}
+
+
 function createNames(type = 'any', numerical_suffix = false) {
     const real_map = {
         "Andromeda": "Andromedae", "Antlia": "Antliae", "Apus": "Apodis", "Aquarius": "Aquarii", "Aquila": "Aquilae", "Ara": "Arae", "Aries": "Arietis", "Auriga": "Aurigae", "Bootes": "Bootis", "Caelum": "Caeli", "Camelopardalis": "Camelopardalis", "Cancer": "Cancri", "Canes Venatici": "Canum Venaticorum", "Canis Major": "Canis Majoris", "Canis Minor": "Canis Minoris", "Capricornus": "Capricorni", "Carina": "Carinae", "Cassiopeia": "Cassiopeiae", "Centaurus": "Centauri", "Cepheus": "Cephei", "Cetus": "Ceti", "Chamaeleon": "Chamaeleontis", "Circinus": "Circini", "Columba": "Columbae", "Coma Berenices": "Comae Berenices", "Corona Australis": "Coronae Australis", "Corona Borealis": "Coronae Borealis", "Corvus": "Corvi", "Crater": "Crateris", "Crux": "Crucis", "Cygnus": "Cygni", "Delphinus": "Delphini", "Dorado": "Doradus", "Draco": "Draconis", "Equuleus": "Equulei", "Eridanus": "Eridani", "Fornax": "Fornacis", "Gemini": "Geminorum", "Grus": "Gruis", "Hercules": "Herculis", "Horologium": "Horologii", "Hydra": "Hydrae", "Hydrus": "Hydri", "Indus": "Indi", "Lacerta": "Lacertae", "Leo": "Leonis", "Leo Minor": "Leonis Minoris", "Lepus": "Leporis", "Libra": "Librae", "Lupus": "Lupi", "Lynx": "Lyncis", "Lyra": "Lyrae", "Mensa": "Mensae", "Microscopium": "Microscopii", "Monoceros": "Monocerotis", "Musca": "Muscae", "Norma": "Normae", "Octans": "Octantis", "Ophiuchus": "Ophiuchi", "Orion": "Orionis", "Pavo": "Pavonis", "Pegasus": "Pegasi", "Perseus": "Persei", "Phoenix": "Phoenicis", "Pictor": "Pictoris", "Pisces": "Piscium", "Piscis Austrinus": "Piscis Austrini", "Puppis": "Puppis", "Pyxis": "Pyxidis", "Reticulum": "Reticuli", "Sagitta": "Sagittae", "Sagittarius": "Sagittarii", "Scorpius": "Scorpii", "Sculptor": "Sculptoris", "Scutum": "Scuti", "Serpens": "Serpentis", "Sextans": "Sextantis", "Taurus": "Tauri", "Telescopium": "Telescopii", "Triangulum": "Trianguli", "Tucana": "Tucanae", "Ursa Major": "Ursae Majoris", "Ursa Minor": "Ursae Minoris", "Vela": "Velorum", "Virgo": "Virginis", "Volans": "Volantis", "Vulpecula": "Vulpeculae"
