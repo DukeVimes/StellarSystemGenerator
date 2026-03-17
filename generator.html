@@ -18,7 +18,13 @@
 </head>
 
 <body>
-    <div id="waitOverlay"></div>
+    <div id="waitOverlay" class="wait-overlay" style="display: none;">
+        <div class="wait-content">
+            <p class="wait-text">Generating System...</p>
+            <div class="pulse-bar"></div>
+            <div class="spinner"></div>
+        </div>
+    </div>
     <div class="container">
         <div class="sidebar">
             <label>System Type</label>
@@ -324,11 +330,23 @@
                 //console.log(JSON.stringify(settings))
 
                 showWait()
-                generateSystem(systemType, star1, star2, orbits, params.seed, template)
-                console.log( system )
-                visualizeSystem(system, settings)
-                openTab(null, "mapView")
-                hideWait()
+                setTimeout(() => {
+                    try {
+                        console.log( "generating system...")
+                        generateSystem(systemType, star1, star2, orbits, params.seed, template)
+                        console.log( system )
+                        console.log( "visualization...")
+                        visualizeSystem(system, settings)
+                        console.log( "DONE")
+                        openTab(null, "mapView")
+                    } 
+                    catch( e ) {
+                        console.err( e )
+                    }
+                    finally {
+                        hideWait()
+                    }
+                }, 50);
             }
 
 
