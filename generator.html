@@ -163,117 +163,14 @@
                     <h2>double planets</h2>
             </div>
         </div>
+    </div>
 
-        <script>
-
-
-
-            function generateSystem(system_type, star1_type, star2_type, n_orbits, seed, template) {
-
-                seed = calculateRandomSeed()
-                params.seed = seed
-                setUrl(params)
-                setGui(params)
+<script>
 
 
 
-                system = {}
-                system.meta = {}
-                system_name = createNames('fake', false)
-                system.meta.designation = system_name
-                system.meta.system_type = system_type
-                system.meta.number_of_orbits = n_orbits
-                //console.log(system)
 
-                stars = generateCentralBodies(star1_type, null, star2_type, null, system_type)
-                system.stars = stars
-                //console.log( "stars:" + stars)
-
-
-                //now position distance from barycenter according to type and mass ratios...
-                setDistanceBarycenter(stars, system_type)
-                //console.log( stars )
-
-                // calculate system limits (hill sphere, combined roche limit, innermost stable orbit, frost limit, ...)
-                limits = calculateSystemBoundaries(...stars)
-                system.boundaries = limits
-
-                //if more planets are required as defined in template, add empty orbits
-                console.log( template.orbits)
-                orbits = Array.from(template.orbits) || []
-                for( let i = orbits.length; i < n_orbits; ++i ) {
-                    orbits.push( {} )
-                }
-                console.log( `pre-created ${orbits.length} orbital areas` ) 
-                //n_orbits = Math.max(n_orbits, n_orbits_template)
-
-                // fill all the missing distances
-                assignOrbitalDistances( orbits, limits.innermostStableOrbit, limits.outermostStableOrbit.stableLimitKM )
-
-                fillObjectMap = {
-                        "PLANET":        generatePlanet,
-                        "DOUBLE_PLANET": generateDoublePlanet,
-                        "ASTEROID_BELT":          generateBelt,
-                        "SPLIT_ASTEROID_BELT":    generateSplitBelt
-                }
-
-                //planet_counter
-                n_planets = 0
-                n_belts = 0
-                MAX_BELTS = 3
-                // we create as many objects as required
-                for (let i = 0; i < orbits.length; ++i) {
-                    //always based on the template (which might be empty)
-                    orbit_prefilled = orbits[i]  
-                    //decide for an object-type (could also be dependend on frostline, etc.)
-                    orbit_class = getWeightedRandomFromObject(DISTRIBUTION_ORBIT_CONTENT)
-                    designation = null
-                    type = null
-                    template = null
-                    if (orbit_class === "PLANET") {
-                        n_planets += 1;
-                        designation = toRoman(n_planets)
-                        type = getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
-                        template = PLANET_TYPES[type]
-                    }                   
-                    else if (orbit_class === "DOUBLE_PLANET") {
-                        n_planets += 1;
-                        designation = toRoman(n_planets) + " a/b"
-                        type = "DOUBLE_PLANET" //getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
-                        template = DOUBLE_PLANET
-                    }
-                    else if (orbit_class === "ASTEROID_BELT") {
-                        n_belts += 1;
-                        type = "BELT"
-                        designation = `${n_belts}. belt`
-                        template = ASTEROID_BELT
-                    }
-                    else if (orbit_class === "SPLIT_ASTEROID_BELT") {
-                        n_belts += 1;
-                        type = "SPLIT_BELT"
-                        designation = `${n_belts} belt inner/outer`
-                        template = SPLIT_ASTEROID_BELT
-                    }
-                    
-                    //ID is always a good idea
-                    orbit_prefilled.id ??= crypto.randomUUID();
-                    orbit_prefilled.class ??= orbit_class
-                    orbit_prefilled.designation ??= designation
-                    orbit_prefilled.type ??= type
-
-                    //now create the actual object
-                    fillObjectMap[orbit_class]( orbit_prefilled, template, system )
-                }
-
-                system.orbits = orbits
-
-                document.getElementById('output').value = JSON.stringify(system, null, 4)
-
-
-            }
-
-
-            function getCleanFormData(formElement) {
+    function getCleanFormData(formElement) {
 
                 const cleanData = {};
                 new FormData(formElement).forEach((value, key) => {
@@ -289,10 +186,10 @@
                 });
 
                 return cleanData;
-            }
+    }
 
 
-            function generateSystemClicked() {
+    function generateSystemClicked() {
                 systemType = params.systemType
                 if (systemType === "RANDOM") {
                     systemType = getWeightedRandomFromObject(DISTRIBUTION_BINARY_TYPE)
@@ -333,37 +230,38 @@
                 setTimeout(() => {
                     try {
                         console.log( "generating system...")
-                        generateSystem(systemType, star1, star2, orbits, params.seed, template)
+                        system = generateSystem(systemType, star1, star2, orbits, params.seed, template)
                         console.log( system )
+                        document.getElementById('output').value = JSON.stringify(system, null, 4)
                         console.log( "visualization...")
                         visualizeSystem(system, settings)
                         console.log( "DONE")
                         openTab(null, "mapView")
                     } 
                     catch( e ) {
-                        console.err( e )
+                        console.error( "Error: " + e )
                     }
                     finally {
                         hideWait()
                     }
                 }, 50);
-            }
+    }
 
 
 
-            ////////////////////////////////////////////////////////////////
-            params = {}
+    ////////////////////////////////////////////////////////////////
+    params = {}
 
 
-            ///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
 
-            function init() {
-                params = getUrlParameters()
-                setGui(params)
-            }
-            window.onload = init;
-        </script>
+    function init() {
+        params = getUrlParameters()
+        setGui(params)
+    }
+    window.onload = init;
 
+</script>
 </body>
 
 

@@ -387,6 +387,9 @@ function canHostTrojans(planetMass, moonMass) {
 
 
 
+
+
+
 /**
  * Calculates thermal boundaries based on stellar luminosity.
  * @param {number} =total_luminosity - Luminosity of the both stars  (relative to SUN = 1.0)
@@ -404,6 +407,7 @@ function calculateStellarThermalBoundaries(total_luminosity) {
     const baseFrostLineAU = 2.7;
     const baseHZInnerAU = 0.95;
     const baseHZOuterAU = 1.37;
+
 
     return {
         totalLuminosity: total_luminosity,
@@ -424,6 +428,21 @@ function calculateStellarThermalBoundaries(total_luminosity) {
 
     };
 }
+
+
+
+function getDiskBoundaries(stellarMass) {
+    // Determine the furthest possible point for a planet
+    // We use a power of 0.6 to keep the scaling realistic
+    const baseMax = 80; 
+    const maxRadius = baseMax * Math.pow(stellarMass, 0.6);
+    
+    // The closest a planet can possibly form (The soot line/sublimation)
+    const minRadius = 0.1 * Math.sqrt(stellarMass);
+
+    return { min: minRadius, max: maxRadius };
+}
+
 
 
 /**
@@ -644,224 +663,6 @@ function calculateAdvancedSolarDay(params) {
         siderealDayHours: Number(siderealRotation.toFixed(2)),
         isRetrogradeSpin: currentRotRetro
     };
-}
-
-
-
-
-
-/**
- * Randomly generates a moon and ring system for a planet.
- * * @param {number} planetMass - kg
- * @param {number} planetDiameter - km
- * @param {number} starMass - kg
- * @param {number} orbitalDistAU - AU
- * @param {number} numMoons - Desired number of moons
- * @param {number} numRings - Desired number of rings
- * @returns {Object} The generated system
- */
-function generateSatelliteSystem(planetMass, planetDiameter, starMass, orbitalDistAU, numMoons, numRings) {
-    const planetRadius = planetDiameter / 2;
-
-    // 1. Calculate the Boundaries
-    // We'll assume a standard rocky/icy density for limits
-    const avgDensity = planetMass / ((4 / 3) * Math.PI * Math.pow(planetRadius, 3));
-
-    // Roche Limits (using same density for satellite as planet for simplicity)
-    const rocheRigid = 1.26 * planetRadius;
-    const rocheFluid = 2.44 * planetRadius;
-
-    // Hill Sphere (Lund Limit is ~1/3 for long term stability)
-    const orbitalDistKM = orbitalDistAU * 149597871;
-    const hillRadius = orbitalDistKM * Math.pow(planetMass / (3 * starMass), 1 / 3);
-    const maxStableOrbit = hillRadius / 3;
-
-    const system = {
-        limits: {
-            rocheRigid: Math.round(rocheRigid),
-            rocheFluid: Math.round(rocheFluid),
-            hillSphere: Math.round(hillRadius),
-            maxStableOrbit: Math.round(maxStableOrbit)
-        },
-        rings: [],
-        moons: []
-    };
-
-    // 2. Generate Rings
-    // Rings typically exist between the planet surface and the Fluid Roche Limit
-    for (let i = 0; i < numRings; i++) {
-        const inner = Math.random() * (rocheFluid - planetRadius) + planetRadius;
-        const outer = Math.random() * (rocheFluid - inner) + inner;
-        system.rings.push({
-            innerEdgeKM: Math.round(inner),
-            outerEdgeKM: Math.round(outer),
-            type: inner < rocheRigid ? "Dust/Debris" : "Icy/Particulate"
-        });
-    }
-
-    // 3. Generate Moons
-    // Moons must be outside the Roche Fluid limit and inside the Stable Hill limit
-    if (maxStableOrbit > rocheFluid) {
-        for (let i = 0; i < numMoons; i++) {
-            const distance = Math.random() * (maxStableOrbit - rocheFluid) + rocheFluid;
-            system.moons.push({
-                name: `Moon-${i + 1}`,
-                orbitKM: Math.round(distance),
-                isMajorMoon: distance < (maxStableOrbit * 0.1) // Closer moons tend to be larger
-            });
-        }
-    }
-
-    // Sort moons by distance for a clean output
-    system.moons.sort((a, b) => a.orbitKM - b.orbitKM);
-
-    return system;
-}
-
-
-
-/**
- * Generates a satellite system with masses and collision-avoidance logic.
- */
-function generateStableSatelliteSystem(planetMass, planetDiameter, starMass, orbitalDistAU, numMoons, numRings) {
-    const planetRadius = planetDiameter / 2;
-    const orbitalDistKM = orbitalDistAU * 149597871;
-
-    // 1. Calculate System Boundaries
-    const rocheFluid = 2.44 * planetRadius;
-    const hillRadius = orbitalDistKM * Math.pow(planetMass / (3 * starMass), 1 / 3);
-    const maxStableOrbit = hillRadius / 3;
-
-    const system = {
-        limits: { rocheFluid, maxStableOrbit },
-        rings: [],
-        moons: []
-    };
-
-    // 2. Generate Rings (Same logic as before)
-    for (let i = 0; i < numRings; i++) {
-        const inner = Math.random() * (rocheFluid - planetRadius) + planetRadius;
-        const outer = Math.random() * (rocheFluid - inner) + inner;
-        system.rings.push({ innerEdgeKM: Math.round(inner), outerEdgeKM: Math.round(outer) });
-    }
-
-    // 3. Generate Moons with Mass and Spacing
-    let attempts = 0;
-    const maxAttempts = 100; // Prevent infinite loops
-
-    while (system.moons.length < numMoons && attempts < maxAttempts) {
-        attempts++;
-
-        // A. Generate a random orbital distance
-        const distance = Math.random() * (maxStableOrbit - rocheFluid) + rocheFluid;
-
-        // B. Generate a random mass (from small asteroid to Moon-sized)
-        // Using a log-scale approach so small moons are more common than big ones
-        const exponent = Math.random() * (22 - 15) + 15; // 10^15 kg to 10^22 kg
-        const moonMass = Math.pow(10, exponent);
-
-        // C. Calculate this moon's Hill Sphere relative to the planet
-        const moonHill = distance * Math.pow(moonMass / (3 * planetMass), 1 / 3);
-
-        // D. Check for overlaps with existing moons
-        // We use a safety factor (e.g., 3x Hill Sphere) to represent the "feeding zone"
-        const safetyFactor = 3.5;
-        const isOverlap = system.moons.some(m => {
-            const distanceBetween = Math.abs(m.orbitKM - distance);
-            const combinedZones = (m.hillSphereKM + moonHill) * safetyFactor;
-            return distanceBetween < combinedZones;
-        });
-
-        if (!isOverlap) {
-            system.moons.push({
-                name: `Moon-${system.moons.length + 1}`,
-                massKG: moonMass,
-                orbitKM: Math.round(distance),
-                hillSphereKM: Math.round(moonHill),
-                stableZoneKM: Math.round(moonHill * safetyFactor)
-            });
-        }
-    }
-
-    system.moons.sort((a, b) => a.orbitKM - b.orbitKM);
-    return system;
-}
-
-
-
-
-
-
-function assignOrbitalDistances(objects, min, max) {
-  // 1. Create our "Anchors" (fixed points that cannot move)
-  // We start with a virtual anchor for the absolute minimum
-  const anchors = [{ index: -1, distance: min }];
-  
-  // Find all preset distances in the list and log their positions
-  objects.forEach((obj, i) => {
-    if (typeof obj.distance === 'number') {
-      anchors.push({ index: i, distance: obj.distance });
-    }
-  });
-  
-  // End with a virtual anchor for the absolute maximum
-  anchors.push({ index: objects.length, distance: max });
-
-  // 2. Process each segment between the anchors
-  for (let i = 0; i < anchors.length - 1; i++) {
-    const startAnchor = anchors[i];
-    const endAnchor = anchors[i + 1];
-    
-    // Calculate how many empty objects are in this specific gap
-    const emptyCount = endAnchor.index - startAnchor.index - 1;
-    if (emptyCount <= 0) continue; // Skip if no empty objects in this gap
-
-    const segmentMin = startAnchor.distance;
-    const segmentMax = endAnchor.distance;
-    const gapSize = segmentMax - segmentMin;
-    
-    // Configuration for this segment
-    const curvePower = 2.0;       // The planetary curve (1.0 = linear, 2.0+ = curved)
-    const jitterVariance = 0.15;  // +/- 15% randomness to make it look natural
-
-    let segmentDistances = [];
-
-    // 3. Generate the distances for this segment
-    for (let j = 0; j < emptyCount; j++) {
-      // Normalize position: spaces objects evenly *between* the anchors 
-      // (prevents them from sitting directly on top of the preset values)
-      const t = (j + 1) / (emptyCount + 1);
-      
-      // Apply the power curve
-      const curvePoint = Math.pow(t, curvePower);
-      const idealDist = segmentMin + (gapSize * curvePoint);
-      
-      // Calculate jitter (random offset)
-      // We scale the jitter by the gap size and number of objects so they don't jump too wildly
-      const maxJitter = gapSize * (jitterVariance / emptyCount);
-      const jitterOffset = (Math.random() * 2 - 1) * maxJitter; 
-      
-      // Apply jitter and ensure it absolutely cannot cross the segment min/max boundaries
-      let finalDist = idealDist + jitterOffset;
-      finalDist = Math.max(segmentMin + 0.1, Math.min(segmentMax - 0.1, finalDist));
-      
-      segmentDistances.push(finalDist);
-    }
-
-    // 4. CRITICAL STEP: Sort the segment to prevent leapfrogging
-    // Jitter might cause a later object to randomly generate a lower number than an earlier one.
-    // Sorting guarantees strict ascending order before we apply them.
-    segmentDistances.sort((a, b) => a - b);
-
-    // 5. Assign the finalized, sorted distances back to the objects
-    let distIndex = 0;
-    for (let k = startAnchor.index + 1; k < endAnchor.index; k++) {
-      objects[k].distance = roundTo(segmentDistances[distIndex++], 0); // Rounded for neatness
-      objects[k].distanceAU = roundTo(  objects[k].distance / CONSTANTS.KM_PER_AU, 2)
-    }
-  }
-
-  return objects;
 }
 
 
