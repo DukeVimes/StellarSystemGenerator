@@ -191,9 +191,6 @@
                 // calculate system limits (hill sphere, combined roche limit, innermost stable orbit, frost limit, ...)
                 limits = calculateSystemBoundaries(...stars)
                 system.boundaries = limits
-                /*
-                            orbits = distributePlanetsInnerBias(n_orbits, system.boundaries.innermostStableOrbit, system.boundaries.outermostStableOrbit.stableLimitKM, bias = 2.5)
-                */
 
                 //if more planets are required as defined in template, add empty orbits
                 console.log( template.orbits)
@@ -260,8 +257,6 @@
 
                     //now create the actual object
                     fillObjectMap[orbit_class]( orbit_prefilled, template, system )
-                   
-                    //orbits.push(orbit_prefilled)
                 }
 
                 system.orbits = orbits
