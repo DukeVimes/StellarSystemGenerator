@@ -172,22 +172,22 @@ function processTokenString(input, dictionary) {
 
 
 function convertUnitStrings( unconverted, dictionary ) {
-
     let converted = unconverted
-    Object.entries( unconverted ).forEach(([key, value]) => {
-        if( typeof value === 'string') {
-            converted.key = processTokenString(value, dictionary)
+    for (const entry of Object.entries( unconverted )) {
+        key = entry[0]
+        value = entry[1]
+        if( typeof( value ) === 'string') {
+            converted[key] = processTokenString(value, dictionary)
         }
-        else if( typeof value === 'array') {
-            converted.key = map( (v) => { return convertUnitStrings(v, dictionary) } );
+        else if( typeof( value ) === 'array') {
+            converted[key] = map( (v) => { return convertUnitStrings(v, dictionary) } );
         }
-        else if( typeof value === 'object') {
-           converted.key =  convertUnitStrings( unconverted.key, dictionary )
+        else if( typeof( value ) === 'object') {
+           converted[key] =  convertUnitStrings( value, dictionary )
         }
 
-    });
+    };
     return converted
-
 }
 
 
@@ -233,7 +233,7 @@ function createNames(type = 'any', numerical_suffix = false) {
  * @param {number} max - Maximum allowed planets (default 99).
  * @returns {number} The generated number of planets.
  */
-function getPoissonPlanetCount(lambda, min = 0, max = 99) {
+function getPoissonCount(lambda, min = 0, max = 99) {
     // Knuth's algorithm for Poisson random variables
     const L = Math.exp(-lambda);
     let k = 0;
@@ -276,72 +276,6 @@ function toRoman(num) {
 }
 
 
-/*
-
-// Example usage:
-console.log(createNames('any'));
-
-
-// ==========================================
-// Examples of how to use it
-// ==========================================
-const myList = ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape"];
-
-// Example 1: Without a threshold
-console.log("No Threshold:");
-console.log(generateRandomComposition(myList));
-
-// Example 2: With a 15% threshold
-console.log("\nWith 15% Threshold:");
-console.log(generateRandomComposition(myList, 15.0));
-
-
-// ==========================================
-// Example Usage
-// ==========================================
-const lootTable = [
-    { object: "Rusty Sword", percentage: 70.0 }, // Common
-    { object: "Steel Shield", percentage: 25.0 }, // Rare
-    { object: "Golden Crown", percentage: 5.0 }   // Legendary
-];
-
-const result = getWeightedRandom(lootTable);
-console.log(`You found: ${result}`);
-
-const lowSum = [
-    { object: "Winner A", percentage: 1 }, // Will be 1/2 (50%)
-    { object: "Winner B", percentage: 1 }  // Will be 1/2 (50%)
-];
-
-// Example 2: Sum is much higher than 100
-const highSum = [
-    { object: "Common", percentage: 400 }, 
-    { object: "Rare", percentage: 100 }
-];
-
-console.log("Result from low sum:", getNormalizedWeightedRandom(lowSum));
-console.log("Result from high sum:", getNormalizedWeightedRandom(highSum));
-
-
-// ==========================================
-// Example Usage
-// ==========================================
-const units = {
-    "SOL_MASS": 1.98847e30, // kg
-    "EARTH_MASS": 5.9722e24, // kg
-    "AU": 149597870.7        // km
-};
-
-console.log(processTokenString("5.75 SOL_MASS", units)); 
-// Result: 1.14337025e+31
-
-console.log(processTokenString("10 AU", units));        
-// Result: 1495978707
-
-console.log(processTokenString(100, units));             
-// Result: 100 (Ignored because it's a number, not a string)
-
-*/
 
 
 function km_to_AU(km) {
@@ -367,74 +301,4 @@ function mass_to(mass, factor) {
  */
 function lerp(start, end, t) {
     return start + t * (end - start);
-}
-
-
-function fill_values_star(prefilled, template) {
-    //prefilled = prefilled || {}
-    //console.log( template )
-    //console.log( prefilled)
-    //console.log( prefilled.code )
-    //prefilled.class ??= template.class
-    prefilled.type ??= template.type
-    prefilled.code ??= template.code
-    prefilled.temp ??= getUniformRandomBetween(template.temp_range[MIN], template.temp_range[MAX])
-    prefilled.luminosity ??= getUniformRandomBetween(template.luminosity_range[MIN], template.luminosity_range[MAX]) * CONSTANTS.SUN_LUMINOSITY
-
-    //mass and radius arent independend
-    interpolation_factor = getUniformRandomBetween(0, 1)
-    prefilled.mass ??= lerp(template.mass_range[MIN], template.mass_range[MAX], interpolation_factor) * CONSTANTS.SUN_MASS
-    prefilled.mass_sol ??= mass_to(prefilled.mass, CONSTANTS.SUN_MASS)
-    prefilled.radius ??= lerp(template.radius_range[MIN], template.radius_range[MAX], interpolation_factor) * CONSTANTS.SUN_RADIUS
-    prefilled.radius_in_sol_radii ??= km_to(prefilled.radius, CONSTANTS.SUN_RADIUS)
-    prefilled.density ??= prefilled.mass / ((4 / 3) * Math.PI * Math.pow(prefilled.radius * CONSTANTS.CM_PER_KM, 3))
-
-    prefilled.roche_limit ??= rocheByDensity(prefilled.radius, prefilled.density, HIGH_DENSITY_PLANET)
-    prefilled.roche_limit_AU ??= km_to_AU(prefilled.roche_limit)
-    prefilled.color ??= getRealisticStarColor(prefilled.temp)
-    //for cepheids fill also the secondary values
-    if (prefilled.code === "V") {
-        //
-        prefilled.pulsation_period ??= getUniformRandomBetween(template.pulsation_period_range[MIN], template.pulsation_period_range[MAX])
-        //overwrite luminosty depending on pulsation
-        prefilled.luminosity = template.luminosity_formula(prefilled.pulsation_period)
-
-        //, use the prefilled ones as min/max limits!
-        prefilled.temp_expanded ??= getUniformRandomBetween(template.temp_range[MIN], prefilled.temp)
-        prefilled.luminosity_expanded ??= getUniformRandomBetween(template.temp_range[MIN], prefilled.luminosity)
-        prefilled.radius_expanded ??= getUniformRandomBetween(prefilled.radius, template.temp_range[MAX])
-        prefilled.color_expanded ??= getRealisticStarColor(prefilled.temp_expanded)
-    }
-    return prefilled
-}
-
-
-function calculateSystemBoundaries(star1, star2 = null) {
-    limits = {}
-    total_lum = star1.luminosity
-    total_lum += star2?.luminosity || 0
-
-    limits = calculateStellarThermalBoundaries(total_lum)
-
-    roche_limit_star1 = rocheByDensity(star1.radius, star1.density, HIGH_DENSITY_PLANET, isFluid = false)
-    roche_limit_rigid_system = roche_limit_star1
-    inner_stable_orbit = roche_limit_rigid_system
-    max_orbital_distance = calculateMaxOrbitalDistance(star1.mass)
-
-    if (star2) {
-        roche_limit_star2 = rocheByDensity(star2.radius, star2.density, HIGH_DENSITY_PLANET, isFluid = false)
-        roche_limit_rigid_system = Math.max(roche_limit_star1, roche_limit_star2)
-        inner_stable_orbit = calculateCriticalOrbit(star1.mass, star2.mass, star1.barycenter_distance + star2.barycenter_distance)
-        max_orbital_distance = calculateMaxOrbitalDistance(star1.mass + star2.mass)
-    }
-
-    limits.rocheLimitRigid = roche_limit_rigid_system
-    limits.innermostStableOrbit = inner_stable_orbit
-    limits.outermostStableOrbit = max_orbital_distance
-
-    limits.rocheLimitRigidAU = km_to_AU(limits.rocheLimitRigid)
-    limits.innermostStableOrbitAU = km_to_AU(limits.innermostStableOrbit)
-    limits.outermostStableOrbitAU = km_to_AU(limits.outermostStableOrbit.stableLimitKM)
-
-    return limits
 }

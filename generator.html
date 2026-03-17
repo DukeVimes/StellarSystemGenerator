@@ -195,39 +195,73 @@
                             orbits = distributePlanetsInnerBias(n_orbits, system.boundaries.innermostStableOrbit, system.boundaries.outermostStableOrbit.stableLimitKM, bias = 2.5)
                 */
 
-                orbits = []
-                n_orbits_template = (template.orbits || []).length
-                n_orbits = Math.max(n_orbits, n_orbits_template)
+                //if more planets are required as defined in template, add empty orbits
+                console.log( template.orbits)
+                orbits = Array.from(template.orbits) || []
+                for( let i = orbits.length; i < n_orbits; ++i ) {
+                    orbits.push( {} )
+                }
+                console.log( `pre-created ${orbits.length} orbital areas` ) 
+                //n_orbits = Math.max(n_orbits, n_orbits_template)
 
+                // fill all the missing distances
+                assignOrbitalDistances( orbits, limits.innermostStableOrbit, limits.outermostStableOrbit.stableLimitKM )
+
+                fillObjectMap = {
+                        "PLANET":        generatePlanet,
+                        "DOUBLE_PLANET": generateDoublePlanet,
+                        "ASTEROID_BELT":          generateBelt,
+                        "SPLIT_ASTEROID_BELT":    generateSplitBelt
+                }
+
+                //planet_counter
                 n_planets = 0
-                for (let i = 1; i <= n_orbits; ++i) {
-                    orbit_template = {}
-                    orbit_template.id ??= crypto.randomUUID();
-                    if (i < n_orbits_template) {
-                        orbit_template = template.orbits[i]
-                    }
-                    orbit_template.distance ??= roundTo(i * getUniformRandomBetween(0.5, 2) * CONSTANTS.KM_PER_AU, 0)
-
-                    orbit_content = getWeightedRandomFromObject(DISTRIBUTION_ORBIT_CONTENT)
-
-                    if (orbit_content === "PLANET") {
+                n_belts = 0
+                MAX_BELTS = 3
+                // we create as many objects as required
+                for (let i = 0; i < orbits.length; ++i) {
+                    //always based on the template (which might be empty)
+                    orbit_prefilled = orbits[i]  
+                    //decide for an object-type (could also be dependend on frostline, etc.)
+                    orbit_class = getWeightedRandomFromObject(DISTRIBUTION_ORBIT_CONTENT)
+                    designation = null
+                    type = null
+                    template = null
+                    if (orbit_class === "PLANET") {
                         n_planets += 1;
                         designation = toRoman(n_planets)
                         type = getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
-                        orbit_template.designation ??= designation
-                        orbit_template.type ??= type
-
-                        generatePlanet(orbit_template, PLANET_TYPES[type], system)
+                        template = PLANET_TYPES[type]
+                    }                   
+                    else if (orbit_class === "DOUBLE_PLANET") {
+                        n_planets += 1;
+                        designation = toRoman(n_planets) + " a/b"
+                        type = "DOUBLE_PLANET" //getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
+                        template = DOUBLE_PLANET
                     }
-                    else {
+                    else if (orbit_class === "ASTEROID_BELT") {
+                        n_belts += 1;
                         type = "BELT"
-                        designation = ""
-                        orbit_template.designation ??= designation
-                        orbit_template.type ??= type
-
+                        designation = `${n_belts}. belt`
+                        template = ASTEROID_BELT
                     }
+                    else if (orbit_class === "SPLIT_ASTEROID_BELT") {
+                        n_belts += 1;
+                        type = "SPLIT_BELT"
+                        designation = `${n_belts} belt inner/outer`
+                        template = SPLIT_ASTEROID_BELT
+                    }
+                    
+                    //ID is always a good idea
+                    orbit_prefilled.id ??= crypto.randomUUID();
+                    orbit_prefilled.class ??= orbit_class
+                    orbit_prefilled.designation ??= designation
+                    orbit_prefilled.type ??= type
 
-                    orbits.push(orbit_template)
+                    //now create the actual object
+                    fillObjectMap[orbit_class]( orbit_prefilled, template, system )
+                   
+                    //orbits.push(orbit_prefilled)
                 }
 
                 system.orbits = orbits
@@ -275,13 +309,18 @@
                 }
                 orbits = params.orbits
                 if (orbits < 0) {
-                    orbits = Math.round(getUniformRandomBetween(0, 50));
+                    orbits = getPoissonCount( 20, 0, 99) // Math.round(getUniformRandomBetween(0, 50));
                 }
                 template = {}
                 if( params.templateBase64 ) {
-                    console.log(  params.templateBase64) 
-                    template_raw = atob( params.templateBase64 )
-                    template = convertUnitStrings(template_raw, UNITS)
+                    try{
+                       template_raw = JSON.parse(atob( params.templateBase64 ))
+                       //console.log( "template-raw: " + JSON.stringify(template_raw) )
+                       template = convertUnitStrings(template_raw, UNITS)
+                       console.log( "template with converted units: " + JSON.stringify(template) )
+                    } catch (e) {
+                        console.error( "Invalid template "+e )
+                    }
                 }
                 
                 //seed
@@ -291,6 +330,7 @@
 
                 showWait()
                 generateSystem(systemType, star1, star2, orbits, params.seed, template)
+                console.log( system )
                 visualizeSystem(system, settings)
                 openTab(null, "mapView")
                 hideWait()

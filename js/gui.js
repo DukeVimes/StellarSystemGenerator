@@ -63,7 +63,15 @@ function setGui(params) {
     document.getElementById('orbits').value = params.orbits
     document.getElementById('seed').value = params.seed
     //console.log( "setGui template from url: " + params.templateBase64 )
-    document.getElementById('template').value = JSON.parse(atob(params.templateBase64))
+    try{
+        console.log( typeof(params.templateBase64) )
+        console.log( typeof(atob(params.templateBase64)) )
+        console.log( typeof( JSON.parse( atob(params.templateBase64)) ) )
+        document.getElementById('template').value = atob(params.templateBase64)
+    }
+    catch(e) {
+        console.error( "unable to parse template" )
+    }
 
     document.getElementById('systemType').addEventListener('change', function (event) { valueChange(event, params) })
     document.getElementById('star1').addEventListener('change', function (event) { valueChange(event, params) })
@@ -90,9 +98,10 @@ function valueChangeTemplate(event, params) {
     newValue = changedElement.value
     //console.log("template value:" + newValue)
 
-    //dont url encode because it will be encoded automatically
-    params['templateBase64'] =  /*encodeURIComponent*/(btoa(JSON.stringify(newValue))) 
+    //dont url encode because it will be encoded automatically, dont use JSON.stringify either
+    params['templateBase64'] =  btoa( newValue ) 
     //console.log( "params template64 for URL encoded: " + params['templateBase64'] )
+
     setUrl(params)
 }
 

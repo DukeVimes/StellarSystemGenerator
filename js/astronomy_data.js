@@ -357,8 +357,9 @@ DISTRIBUTION_STAR_TYPE = {
 // DISTRIBUTION OF ORBITAL-TYPE
 DISTRIBUTION_ORBIT_CONTENT = {
     PLANET: 0.8,
-    //DOUBLE_PLANET: 0.1,
-    ASTEROID_BELT: 0.1
+    DOUBLE_PLANET: 0.1,
+    ASTEROID_BELT: 0.1,
+    SPLIT_ASTEROID_BELT: 0.1
 }
 
 // DISTRIBUTION OF ORBITAL-TYPE
@@ -387,10 +388,23 @@ const PLANET_TYPES = {
         mass_range: [0.001 * CONSTANTS.MASS_MOON, 0.25 * CONSTANTS.MASS_MOON],
         density_range: [1.5, 3.0],
     },
-
-
-
 };
+
+
+DOUBLE_PLANET = {
+
+}
+
+
+ASTEROID_BELT = {
+
+}
+
+
+SPLIT_ASTEROID_BELT = {
+
+}
+
 
 // DISTRIBUTION OF PLANET-TYPES
 DISTRIBUTION_PLANET_TYPE = {
@@ -401,44 +415,3 @@ DISTRIBUTION_PLANET_TYPE = {
     GAS_GIANT: 0.1
 }
 
-// example
-
-/*
-
-{
-    "meta": {
-        "designation":
-        "seed":
-        "number_of_planets":
-        "star1":
-        "star2":
-    }
-    "central_bodys": [ ],
-    "_characteristics": {},
-    "orbits": [
-        { "number": 9,
-          "designation": "IX"
-          "distance": "",
-          "eccentricity": "",
-          "resonance": {
-                  "with": 8,
-                  "factor": "2:3"
-              }
-          "type" : PLANET ! BINARY_PLANET ! ASTEROID_BELT
-          "binary_planet": {
-             "plane":  "15 deg",
-             "eccentricity"
-             "planet1": { "designation": "a",
-                          "tidalLock"  true,
-                          "satellites : []"
-
-                         },
-             "planet2": { "designation": "b",
-
-                         },
-           }
-        }
-    ]
-}
-
-*/

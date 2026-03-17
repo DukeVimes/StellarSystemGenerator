@@ -1,7 +1,7 @@
 
 
 
-function generateAsteroidBelt(prefilled) {
+function visualizeAsteroidBelt(prefilled) {
 
     width = 200
     height = 600
@@ -83,7 +83,7 @@ function getScaledRadius(realKm) {
 
 
 
-function generatePlanetarySystem(prefilled) {
+function visualizePlanetarySystem(prefilled) {
     let width = 0
     let height = 0
     let center_x = 0

@@ -97,7 +97,7 @@ function getPlanetChemistry(surfaceTemp, escapeVelocity, threshold = 0.01) {
     }
 
     return {
-        states: stateSummary,
+        //states: stateSummary,
         atmosphere: generateRandomComposition(gaseousCandidates, threshold)
     };
 }
@@ -151,6 +151,8 @@ function getBinaryStatus(sepAU, r1Solar, r2Solar) {
     return "DETACHED";
 }
 
+
+
 /**
  * Berechnet den Roche-Lobe-Radius nach Peter Eggleton (1983).
  * @param {number} a - Orbitaler Abstand (große Halbachse).
@@ -171,6 +173,8 @@ function getEggletonRL(a, m1, m2) {
     return a * (numerator / denominator);
 }
 
+
+
 //use this for both stars as donors, the smaller distance would close enough for a contact binary
 /**
  * Berechnet den Roche-Lobe-Radius nach Peter Eggleton (1983).
@@ -184,6 +188,8 @@ function getMaxDistanceForSemiDetached(rDonor, mDonor, mRecipient) {
 
     return rDonor / eggletonFactor;
 }
+
+
 
 function calculateRequiredDistance(star1, star2, targetState) {
     const star1_donor_dist = getMaxDistanceForSemiDetached(star1.radius, star1.mass, star2.mass);
@@ -472,98 +478,29 @@ function calculatePlanetHillSphere(planetMass, starMass, orbitalDistanceAU) {
 
 
 
-/**
- * Distributes a Poisson-calculated number of planets with an inner-system bias.
- * @param {number} count - Total planets (from your getPoissonPlanetCount function)
- * @param {number} rocheLimit - The inner absolute limit (AU or km)
- * @param {number} hillSphere - The outer absolute limit (AU or km)
- * @param {number} bias - Higher numbers (e.g., 2.0) cluster planets tighter to the star
- */
-function distributePlanetsInnerBias(count, rocheLimit, hillSphere, bias = 2.5) {
-    const orbits = [];
-    const totalAvailableSpace = hillSphere - rocheLimit;
-
-    for (let i = 0; i < count; i++) {
-        // 1. Create a raw random value 0 to 1
-        let rawLocation = Math.random();
-
-        // 2. Apply Power Bias: Raising to a power > 1 pushes values toward 0 (the inner limit)
-        // This simulates a "Log-Normal" style distribution
-        let biasedLocation = Math.pow(rawLocation, bias);
-        let orbit = rocheLimit + (biasedLocation * totalAvailableSpace);
-
-        orbits.push(Math.round(orbit));
-    }
-
-    // Sort orbits so Planet 1 is the innermost
-    return orbits.sort((a, b) => a - b);
-}
-
 
 function calculateEscapeVelocity(mass, radius) {
     if (radius <= 0) {
         alert("invalid radius")
         return 0
     }
-    //console.log("Input Mass:", mass);
-    //console.log("Input Radius:", radius);
-    //console.log("G Constant:", CONSTANTS.G);
     // Calculate the parts separately
     const numerator = 2 * CONSTANTS.G * mass;
     const denominator = radius * 1000;
-
-    //console.log("Numerator:", numerator);
-
     if (denominator === 0) return 0;
-
     const escV = Math.sqrt(numerator / denominator);
-    //console.log("Result:", escV);
-
     return escV
 }
 
 
 
+
 function calculateSurfaceGravity(mass, radius) {
 
-
-
 }
 
 
 
-
-
-/**
- * Evaluates a planet's characteristics based on mass and radius.
- * @param {number} mass - Mass of the planet in kg.
- * @param {number} radius - Radius of the planet in meters.
- * @param {number} surfaceTemp - Average surface temperature in Kelvin.
- * @returns {object} - Analysis of atmosphere and surface.
- */
-function analyzePlanet(mass, radius, surfaceTemp) {
-
-    // 1. Calculate Escape Velocity: v_e = sqrt(2GM / R)
-    const escapeVelocity = calculateEscapeVelocity(mass, radius)
-
-    // 2. Calculate Thermal Velocity of Hydrogen (lightest gas): v_th = sqrt(3kT / m)
-    const thermalVelocityH2 = Math.sqrt((3 * CONSTANTS.BOLTZMANN_K * surfaceTemp) / CONSTANTS.M_HYDROGEN);
-
-    // 3. Determine Atmosphere Potential
-    // Rule of thumb: Escape velocity must be ~6x thermal velocity to retain gas over billions of years.
-    const canHoldAtmosphere = escapeVelocity > (thermalVelocityH2 * 6);
-
-    // 4. Determine Surface Type
-    // Generally, planets > 10 Earth masses tend to accumulate thick gas envelopes (Gas Giants).
-    const isHardSurface = mass < (CONSTANTS.EARTH_MASS * 10);
-
-    return {
-        escapeVelocity: escapeVelocity.toFixed(2) + " m/s",
-        hasAtmosphere: canHoldAtmosphere,
-        hasHardSurface: isHardSurface,
-        planetType: isHardSurface ? "Terrestrial/Rocky" : "Gas Giant/Gas Dwarf"
-    };
-}
 
 
 
@@ -586,18 +523,10 @@ function calculatePlanetTemp(luminosity, distance, albedo = 0.3) {
 
     return {
         kelvin: Math.round(tempK),
-        celsius: Math.round(tempK - 273.15),
-        fahrenheit: Math.round((tempK - 273.15) * 9 / 5 + 32)
+        celsius: Math.round(tempK - 273.15)
     };
 }
 
-// Example: Earth's parameters
-//const sunLuminosity = 3.828e26; 
-//Monday14?const earthDistance = 1.496e11; 
-//const earthAlbedo = 0.3;
-//console.log(calculatePlanetTemp(sunLuminosity, earthDistance, earthAlbedo));
-// Output: ~255K (-18°C). 
-// Note: Earth's actual avg is ~15°C due to the Greenhouse Effect!
 
 
 /**
@@ -715,37 +644,6 @@ function calculateAdvancedSolarDay(params) {
         siderealDayHours: Number(siderealRotation.toFixed(2)),
         isRetrogradeSpin: currentRotRetro
     };
-}
-
-
-
-function solvePlanet(data) {
-    const p = { ...data };
-
-    // 1. Calculate Temperature if missing (requires distance & luminosity)
-    if (!p.temp && p.distance && p.luminosity) {
-        const albedo = p.albedo || 0.3;
-        const flux = p.luminosity / (4 * Math.PI * Math.pow(p.distance, 2));
-        p.temp = Math.pow((flux * (1 - albedo)) / (4 * CONSTANTS.STEFAN_BOLTZMANN), 0.25);
-    }
-
-    // 2. Calculate Escape Velocity (requires mass & radius)
-    if (!p.escapeVelocity && p.mass && p.radius) {
-        p.escapeVelocity = Math.sqrt((2 * CONSTANTS.G * p.mass) / p.radius);
-    }
-
-    // 3. Determine Atmosphere (requires temp & escapeVelocity)
-    if (p.temp && p.escapeVelocity) {
-        const v_th = Math.sqrt((3 * CONSTANTS.BOLTZMANN_K * p.temp) / CONSTANTS.M_HYDROGEN);
-        p.hasAtmosphere = p.escapeVelocity > (v_th * 6);
-    }
-
-    // 4. Determine Surface Type (requires mass)
-    if (p.mass) {
-        p.isHardSurface = p.mass < (CONSTANTS.EARTH_MASS * 10);
-    }
-
-    return p;
 }
 
 
@@ -890,120 +788,84 @@ function generateStableSatelliteSystem(planetMass, planetDiameter, starMass, orb
 }
 
 
-/*
-
-// ==========================================
-// Example: A Jupiter-like setup
-// ==========================================
-const myPlanet = generateSatelliteSystem(
-    1.898e27,   // Jupiter Mass
-    142984,     // Jupiter Diameter
-    1.989e30,   // Sun Mass
-    5.2,        // 5.2 AU from Sun
-    5,          // 5 Moons
-    2           // 2 Rings
-);
-
-console.log(myPlanet);
-
-// ==========================================
-// Test Run
-// ==========================================
-const result = generateStableSatelliteSystem(
-    5.97e24, // Earth Mass
-    12756,   // Earth Diameter
-    1.98e30, // Sun Mass
-    1.0,     // 1 AU
-    3,       // Try to place 3 moons
-    1        // 1 Ring
-);
-
-
-*/
 
 
 
 
+function assignOrbitalDistances(objects, min, max) {
+  // 1. Create our "Anchors" (fixed points that cannot move)
+  // We start with a virtual anchor for the absolute minimum
+  const anchors = [{ index: -1, distance: min }];
+  
+  // Find all preset distances in the list and log their positions
+  objects.forEach((obj, i) => {
+    if (typeof obj.distance === 'number') {
+      anchors.push({ index: i, distance: obj.distance });
+    }
+  });
+  
+  // End with a virtual anchor for the absolute maximum
+  anchors.push({ index: objects.length, distance: max });
 
-/**
- * Advanced System Generator
- * @param {number} starMass - kg
- * @param {number} starLuminosity - Relative to Sun
- * @param {number} starDiameter - km
- * @param {number} numObjects - Target number of major bodies/belts
- */
-function generateAdvancedSystem(starMass, starLuminosity, starDiameter, numObjects) {
-    const starRadius = starDiameter / 2;
-    const rocheLimitAU = (2.44 * starRadius) / 149597871;
-    const frostLineAU = 2.7 * Math.sqrt(starLuminosity);
-    const maxStableAU = 40000 * Math.pow(starMass / 1.9885e30, 1 / 3);
+  // 2. Process each segment between the anchors
+  for (let i = 0; i < anchors.length - 1; i++) {
+    const startAnchor = anchors[i];
+    const endAnchor = anchors[i + 1];
+    
+    // Calculate how many empty objects are in this specific gap
+    const emptyCount = endAnchor.index - startAnchor.index - 1;
+    if (emptyCount <= 0) continue; // Skip if no empty objects in this gap
 
-    const system = {
-        metadata: { rocheLimitAU, frostLineAU, maxStableAU },
-        bodies: []
-    };
+    const segmentMin = startAnchor.distance;
+    const segmentMax = endAnchor.distance;
+    const gapSize = segmentMax - segmentMin;
+    
+    // Configuration for this segment
+    const curvePower = 2.0;       // The planetary curve (1.0 = linear, 2.0+ = curved)
+    const jitterVariance = 0.15;  // +/- 15% randomness to make it look natural
 
-    let attempts = 0;
-    while (system.bodies.length < numObjects && attempts < 300) {
-        attempts++;
+    let segmentDistances = [];
 
-        // Logarithmic distance for realistic spacing
-        const logMin = Math.log10(rocheLimitAU * 1.5);
-        const logMax = Math.log10(maxStableAU * 0.1);
-        const distanceAU = Math.pow(10, Math.random() * (logMax - logMin) + logMin);
-
-        let massKG, type, hillSphereAU;
-        const roll = Math.random();
-
-        // 1. Determine Type based on Distance and Probability
-        if (distanceAU < 0.1 && roll < 0.05) {
-            // HOT JUPITER (Rare migration)
-            massKG = Math.pow(10, Math.random() * (28.3 - 27) + 27);
-            type = "Hot Jupiter";
-        } else if (roll < 0.15) {
-            // ASTEROID BELT (Failed planet)
-            type = "Asteroid Belt";
-            massKG = 1e21; // Negligible total mass
-        } else if (roll < 0.30) {
-            // DWARF PLANET
-            massKG = Math.pow(10, Math.random() * (23 - 20) + 20);
-            type = "Dwarf Planet";
-        } else {
-            // MAJOR PLANETS
-            if (distanceAU > frostLineAU) {
-                massKG = Math.pow(10, Math.random() * (28 - 25.5) + 25.5);
-                type = distanceAU > frostLineAU * 4 ? "Ice Giant" : "Gas Giant";
-            } else {
-                massKG = Math.pow(10, Math.random() * (25 - 23.5) + 23.5);
-                type = "Terrestrial";
-            }
-        }
-
-        // 2. Stability Check
-        hillSphereAU = distanceAU * Math.pow(massKG / (3 * starMass), 1 / 3);
-        const safetyFactor = type === "Asteroid Belt" ? 4 : 12;
-
-        const isOverlap = system.bodies.some(b => {
-            const distBetween = Math.abs(b.orbitAU - distanceAU);
-            const combinedZones = (b.hillSphereAU + hillSphereAU) * safetyFactor;
-            return distBetween < combinedZones;
-        });
-
-        if (!isOverlap) {
-            system.bodies.push({
-                name: `${type}-${system.bodies.length + 1}`,
-                orbitAU: Number(distanceAU.toFixed(4)),
-                massKG: type === "Asteroid Belt" ? 0 : massKG,
-                type: type,
-                hillSphereAU: hillSphereAU,
-                isHabitable: false // Logic to be added next
-            });
-        }
+    // 3. Generate the distances for this segment
+    for (let j = 0; j < emptyCount; j++) {
+      // Normalize position: spaces objects evenly *between* the anchors 
+      // (prevents them from sitting directly on top of the preset values)
+      const t = (j + 1) / (emptyCount + 1);
+      
+      // Apply the power curve
+      const curvePoint = Math.pow(t, curvePower);
+      const idealDist = segmentMin + (gapSize * curvePoint);
+      
+      // Calculate jitter (random offset)
+      // We scale the jitter by the gap size and number of objects so they don't jump too wildly
+      const maxJitter = gapSize * (jitterVariance / emptyCount);
+      const jitterOffset = (Math.random() * 2 - 1) * maxJitter; 
+      
+      // Apply jitter and ensure it absolutely cannot cross the segment min/max boundaries
+      let finalDist = idealDist + jitterOffset;
+      finalDist = Math.max(segmentMin + 0.1, Math.min(segmentMax - 0.1, finalDist));
+      
+      segmentDistances.push(finalDist);
     }
 
-    system.bodies.sort((a, b) => a.orbitAU - b.orbitAU);
-    return system;
+    // 4. CRITICAL STEP: Sort the segment to prevent leapfrogging
+    // Jitter might cause a later object to randomly generate a lower number than an earlier one.
+    // Sorting guarantees strict ascending order before we apply them.
+    segmentDistances.sort((a, b) => a - b);
+
+    // 5. Assign the finalized, sorted distances back to the objects
+    let distIndex = 0;
+    for (let k = startAnchor.index + 1; k < endAnchor.index; k++) {
+      objects[k].distance = roundTo(segmentDistances[distIndex++], 0); // Rounded for neatness
+      objects[k].distanceAU = roundTo(  objects[k].distance / CONSTANTS.KM_PER_AU, 2)
+    }
+  }
+
+  return objects;
 }
+
+
+
 
 
 
@@ -1070,19 +932,3 @@ function checkResonance(ratio) {
 }
 
 
-
-
-/*
-
-let rawSystem = generateAdvancedSystem(starMass, luminosity, diameter, 10);
-let finalSystem = auditSystem(rawSystem, starMass);
-
-console.log("System Processed. Checking for survivors...");
-finalSystem.bodies.forEach(b => {
-    let status = b.isTidallyLocked ? "[Tidally Locked] " : "";
-    let res = b.resonance ? `(In ${b.resonance} resonance with next planet)` : "";
-    console.log(`${b.name} at ${b.orbitAU} AU ${status}${res}`);
-});
-
-
-*/

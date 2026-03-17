@@ -61,13 +61,16 @@ function placeOrbits(roche_limit, orbits, available_width, height) {
   for (const orbit of orbits) {
     let rp = null
     if (["DWARF_PLANET", "GAS_GIANT", "ICE_GIANT", "TERRESTIAL_PLANET"].includes(orbit.type)) {
-      rp = generatePlanetarySystem(orbit)
+      rp = visualizePlanetarySystem(orbit)
     }
-    else if (orbit.type === "BELT") {
-      rp = generateAsteroidBelt(orbit)
+    else if (orbit.type === "ASTEROID_BELT") {
+      rp = visualizeAsteroidBelt(orbit)
     }
-    min_needed_width += rp.width
-    orbital_objects.push({ data: orbit, visual: rp })
+
+    if( rp ) {
+      min_needed_width += rp.width
+      orbital_objects.push({ data: orbit, visual: rp })
+    }
   }
 
   //now we have all the svg-objects, their width, the sum of all width, min and maximum distance
