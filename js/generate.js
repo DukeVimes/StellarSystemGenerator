@@ -82,6 +82,7 @@ function fill_values_star(prefilled, template) {
     prefilled.code ??= template.code
     prefilled.temp ??= getUniformRandomBetween(template.temp_range[MIN], template.temp_range[MAX])
     prefilled.luminosity ??= getUniformRandomBetween(template.luminosity_range[MIN], template.luminosity_range[MAX]) * CONSTANTS.SUN_LUMINOSITY
+    prefilled.age ??= roundTo( getUniformRandomBetween(template.age_range[MIN], template.age_range[MAX]), 0 )
 
     //mass and radius arent independend
     interpolation_factor = getUniformRandomBetween(0, 1)

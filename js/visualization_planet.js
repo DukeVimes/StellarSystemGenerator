@@ -92,9 +92,11 @@ function visualizePlanetarySystem(prefilled) {
     let svg = ""
 
     let radius = getScaledRadius(prefilled.radius)   //dwarf-planet to gas-giant
-    width = 2 * radius
+    
+    padding = Math.max( 10, radius ) //minimum padding between planets
+    width = 2 * radius + 2 * padding
     height = 2 * radius
-    center_x = radius
+    center_x = radius + padding
     center_y = radius
 
     let excentricity = 90 //getUniformRandomBetween( 2, 100 )

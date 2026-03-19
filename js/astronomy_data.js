@@ -27,7 +27,9 @@ const CONSTANTS = {
 
     MASS_JUPITER: 1.898e27,
     MASS_EARTH: 5.972e24,
-    MASS_MOON: 7.346e22
+    MASS_MOON: 7.346e22,
+
+    AGE_UNIVERSE: 1377 // Mio years
 };
 
 
@@ -168,6 +170,7 @@ const STELLAR_TYPES = {
         radius_range: [6.6, 20.0],
         luminosity_range: [30000, 1000000],
         temp_range: [30000, 50000],
+        age_range: [1, 10],
         possible_RLOF: true,
         frequency_percent: 0.00003
     },
@@ -179,6 +182,7 @@ const STELLAR_TYPES = {
         radius_range: [1.8, 6.6],
         luminosity_range: [25, 30000],
         temp_range: [10000, 30000],
+        age_range: [1, 100],
         possible_RLOF: true,
         frequency_percent: 0.13
     },
@@ -190,6 +194,7 @@ const STELLAR_TYPES = {
         radius_range: [1.4, 1.8],
         luminosity_range: [5, 25],
         temp_range: [7500, 10000],
+        age_range: [1, 1000],
         possible_RLOF: true,
         frequency_percent: 0.6
     },
@@ -201,6 +206,7 @@ const STELLAR_TYPES = {
         radius_range: [1.15, 1.4],
         luminosity_range: [1.5, 5],
         temp_range: [6000, 7500],
+        age_range: [1, 4000],
         possible_RLOF: true,
         frequency_percent: 3.0
     },
@@ -212,6 +218,7 @@ const STELLAR_TYPES = {
         radius_range: [0.96, 1.15],
         luminosity_range: [0.6, 1.5],
         temp_range: [5200, 6000],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 7.6
     },
@@ -223,6 +230,7 @@ const STELLAR_TYPES = {
         radius_range: [0.7, 0.96],
         luminosity_range: [0.08, 0.6],
         temp_range: [3700, 5200],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 12.1
     },
@@ -234,6 +242,7 @@ const STELLAR_TYPES = {
         radius_range: [0.1, 0.7],
         luminosity_range: [0.0001, 0.08],
         temp_range: [2400, 3700],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 76.45
     },
@@ -245,6 +254,7 @@ const STELLAR_TYPES = {
         radius_range: [10, 50],
         luminosity_range: [0.0001, 0.08],
         temp_range: [2400, 3700],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: true,
         frequency_percent: 76.45
     },
@@ -258,6 +268,7 @@ const STELLAR_TYPES = {
         radius_range: [0.08, 0.12], // Roughly Jupiter sized
         luminosity_range: [0.00001, 0.0001],
         temp_range: [300, 2400],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 1.5 // Estimated relative to stars
     },
@@ -269,6 +280,7 @@ const STELLAR_TYPES = {
         radius_range: [0.008, 0.02], // Roughly Earth sized
         luminosity_range: [0.0001, 0.01],
         temp_range: [4000, 150000],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 0.4
     },
@@ -282,6 +294,7 @@ const STELLAR_TYPES = {
         temp_range: [5000, 6500],      // They sit in a very specific temp window
         pulsation_period_range: [1.0, 100.0], // Days
         luminosity_formula: (period) => Math.pow(10, 1.25 * Math.log10(period) + 2.3),
+        age_range: [1, 400],
         possible_RLOF: false,
         frequency_percent: 0.1
     },
@@ -293,6 +306,7 @@ const STELLAR_TYPES = {
         radius_range: [0.000014, 0.00002], // ~20km across
         luminosity_range: [1e-6, 1.0], // Initial heat is high, but surface area is tiny
         temp_range: [500000, 1000000],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 0.05
     },
@@ -304,6 +318,7 @@ const STELLAR_TYPES = {
         radius_range: [0.000014, 0.00002],
         luminosity_range: [0.01, 100], // High "apparent" luminosity due to beams
         temp_range: [500000, 1000000],
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 0.01
     },
@@ -315,6 +330,7 @@ const STELLAR_TYPES = {
         radius_range: [0.000006, 0.0001], // Schwarzschild radius (event horizon)
         luminosity_range: [0, 0], // Accretion disk not included
         temp_range: [0, 0], // Hawking radiation is negligible
+        age_range: [1, CONSTANTS.AGE_UNIVERSE],
         possible_RLOF: false,
         frequency_percent: 0.002
     }

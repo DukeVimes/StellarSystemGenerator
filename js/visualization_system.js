@@ -25,8 +25,13 @@ function calculatePositionsEvenlyDistributed(planets, svgWidth, minWidth) {
   numberOfPlanets = planets.length
   if (minWidth <= 0.8 * svgWidth) {
     deltaX = svgWidth / (numberOfPlanets + 1)
+    lastX = 0
     return planets.map((p, index) => {
-      finalX = (index + 1) * deltaX
+      //finalX = (index + 1) * deltaX
+      delta = Math.max( 0, deltaX - p.visual.width )// availableSpace left over
+      finalX = lastX + delta/2//p.visual.width / 2
+      lastX = finalX + p.visual.width + delta/2
+      
       return { ...p, x_pos: finalX }
     })
   } else {
