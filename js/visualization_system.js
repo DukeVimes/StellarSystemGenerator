@@ -14,7 +14,6 @@ function calculatePositionsLogarithmic(planets, svgWidth, dMin, dMax) {
     // If this is the first planet, it just needs to be MIN_SPACING from the Sun
     // otherwise it has to be at least as far as previous position + width of the element
     let finalX = Math.max(idealX, lastX) + p.visual.width / 2;
-
     lastX = finalX; // Update for the next neighbor
     return { ...p, x_pos: finalX };
   });
@@ -31,7 +30,7 @@ function calculatePositionsEvenlyDistributed(planets, svgWidth, minWidth) {
       delta = Math.max( 0, deltaX - p.visual.width )// availableSpace left over
       finalX = lastX + delta/2//p.visual.width / 2
       lastX = finalX + p.visual.width + delta/2
-      
+      //alert(finalX)
       return { ...p, x_pos: finalX }
     })
   } else {
@@ -49,7 +48,7 @@ function calculatePositionsEvenlyDistributed(planets, svgWidth, minWidth) {
 
 
 
-function placeOrbits(roche_limit, orbits, available_width, height) {
+function placeOrbits(roche_limit, orbits, available_width, height, settings={}) {
 
   //to gnerate and place orbital object we do two passes:
   // 1st we generate each orbital object with its svg and width and store it together with the original object
@@ -66,10 +65,16 @@ function placeOrbits(roche_limit, orbits, available_width, height) {
   for (const orbit of orbits) {
     let rp = null
     if (["DWARF_PLANET", "GAS_GIANT", "ICE_GIANT", "TERRESTIAL_PLANET"].includes(orbit.type)) {
-      rp = visualizePlanetarySystem(orbit)
+      rp = visualizePlanetarySystem(orbit, settings)
     }
     else if (orbit.type === "ASTEROID_BELT") {
-      rp = visualizeAsteroidBelt(orbit)
+      rp = visualizeAsteroidBelt(orbit, settings)
+    }
+    else if (orbit.type === "SPLIT_BELT") {
+      rp = visualizeAsteroidBelt(orbit, settings)
+    }
+    else if (orbit.type === "DOUBLE_PLANET") {
+      rp = visualizeDoublePlanet(orbit, settings)
     }
 
     if( rp ) {
@@ -79,7 +84,7 @@ function placeOrbits(roche_limit, orbits, available_width, height) {
   }
 
   //now we have all the svg-objects, their width, the sum of all width, min and maximum distance
-  // in phase 2 we can now position the objects an build an x-Axis!
+  // in phase 2 we can now position the objects and build an x-Axis!
   //positionedOrbits = calculatePositionsLogarithmic( orbital_objects, available_width, roche_limit, max_distance )
   positionedOrbits = calculatePositionsEvenlyDistributed(orbital_objects, available_width, min_needed_width)
 
@@ -87,10 +92,11 @@ function placeOrbits(roche_limit, orbits, available_width, height) {
   neededPixels = finalOrbit.x_pos + finalOrbit.visual.width / 2
   const SVG_WIDTH = Math.max(available_width, neededPixels);
 
-  distance_scale = []
+  distance_scale = [{"distance":0, "x_pos":0}] //barycenter
+  distance_scale = [{"distance":roche_limit, "x_pos":70}] //roche-limit line
   for (const pos_orbit of positionedOrbits) {
     console.log(pos_orbit)
-    distance_scale.push({ "distance": pos_orbit.data.distance, "x_pos": pos_orbit.x_pos })
+    distance_scale.push({ "distance": pos_orbit.data.distance, "x_pos": pos_orbit.x_pos, "width": pos_orbit.visual.width })
     svg += `<g transform="translate(${pos_orbit.x_pos - pos_orbit.visual.width / 2}, ${height / 2 - pos_orbit.visual.center_y})">
                        ${pos_orbit.visual.svg}
                    </g>`
@@ -112,7 +118,7 @@ function placeOrbits(roche_limit, orbits, available_width, height) {
 /**
  * Maps a distance in km to an x-position in pixels based on a non-linear planet array.
  * @param {number} targetKm - The distance you want to map.
- * @param {Array} planets - Your array of {name, km, x} objects.
+ * @param {Array} scale - Your array of {name, km, x} objects.
  * @returns {number} The calculated x-position in pixels.
  */
 function getXPosForKm(targetKm, scale) {
@@ -156,10 +162,10 @@ function getXPosForKm(targetKm, scale) {
 function createDistanceScale(scale) {
 
 
-  const tickIntervalKm = 0.25 * CONSTANTS.KM_PER_AU;
+  let tickIntervalKm = 0.25 * CONSTANTS.KM_PER_AU;
   const maxKm = scale.at(- 1).distance;
 
-  let rulerSvg = `<g class="ruler" transform="translate(0, 80)">`;
+  let rulerSvg = `<g class="ruler">`;
   // 1. Draw the main horizontal line
   rulerSvg += `<line x1="${scale[0].x_pos}" y1="0" x2="${scale.at(-1).x_pos}" y2="0" stroke="#666" />`;
 
@@ -177,7 +183,12 @@ function createDistanceScale(scale) {
     const p1 = scale[i];
     const p2 = scale[i + 1];
 
-    // Major Tick for Planet
+    if(currentTickKm < tickIntervalKm) {
+       currentTickKm += tickIntervalKm;
+       continue
+    }
+
+    //Major Tick for Planet
     rulerSvg += `<line x1="${p1.x_pos}" y1="-10" x2="${p1.x_pos}" y2="10" stroke="white" stroke-width="2" />`;
 
     if (p1 && p2) {
@@ -189,6 +200,15 @@ function createDistanceScale(scale) {
 
       const auValue = currentTickKm / CONSTANTS.KM_PER_AU;
       const isMajorAU = Math.abs(auValue - Math.round(auValue)) < 0.01;
+
+      if( pxSpan/(kmSpan/tickIntervalKm) < 20 ) {
+        tickIntervalKm*=2
+        
+      }
+      else if(  pxSpan/(kmSpan/tickIntervalKm) > 40 ) {
+        tickIntervalKm/=2
+      }
+      console.log(tickIntervalKm)
 
       // 3. Draw Tick
       rulerSvg += `<line x1="${tickX}" y1="0" x2="${tickX}" y2="${isMajorAU ? 15 : 7}" 
@@ -212,7 +232,6 @@ function createDistanceScale(scale) {
 
   rulerSvg += `</g>`;
   return rulerSvg
-  return rulerSvg;
 }
 
 
@@ -327,9 +346,11 @@ function visualizeSystem(system, settings) {
   const starsX = starArea / 3
   const middleY = SVG_HEIGHT / 2;
 
+  console.log( "placing orbits...")
   placedOrbitsResult = placeOrbits(system.boundaries.innermostStableOrbit, system.orbits, SVG_WIDTH - starArea, SVG_HEIGHT)
   scale = placedOrbitsResult.scale
 
+  console.log( "creating distance scale...")
   distanceScaleSvg = createDistanceScale(scale)
   SVG_WIDTH = Math.max(SVG_WIDTH, starArea + placedOrbitsResult.width)
 
@@ -388,7 +409,9 @@ function visualizeSystem(system, settings) {
     svg += createHabitableZone(system.boundaries.habitableZone.inner, system.boundaries.habitableZone.outer, scale)
   }
   if (settings.showDistanceScale) {
+    svg += `<g transform="translate(${barycenterX}, 200)">`
     svg += distanceScaleSvg
+    svg += `</g>`
   }
   svg += `<g transform="translate(${starArea}, 0)">`
   svg += placedOrbitsResult.svg //placeOrbits( system.boundaries.innermostStableOrbit , system.orbits, SVG_WIDTH-starArea, SVG_HEIGHT )

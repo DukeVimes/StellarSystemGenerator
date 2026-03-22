@@ -356,7 +356,7 @@ function generateStableSatelliteSystem(planetMass, planetDiameter, starMass, orb
 function assignOrbitalDistances(objects, min, max) {
   // 1. Create our "Anchors" (fixed points that cannot move)
   // We start with a virtual anchor for the absolute minimum
-  const anchors = [{ index: -1, distance: min }];
+  const anchors = [{ index: -1, distance: min }];  //min
   
   // Find all preset distances in the list and log their positions
   objects.forEach((obj, i) => {
@@ -406,7 +406,7 @@ function assignOrbitalDistances(objects, min, max) {
       let finalDist = idealDist + jitterOffset;
       finalDist = Math.max(segmentMin + 0.1, Math.min(segmentMax - 0.1, finalDist));
       
-      segmentDistances.push(finalDist);
+      segmentDistances.push( min + finalDist);
     }
 
     // 4. CRITICAL STEP: Sort the segment to prevent leapfrogging
@@ -417,7 +417,7 @@ function assignOrbitalDistances(objects, min, max) {
     // 5. Assign the finalized, sorted distances back to the objects
     let distIndex = 0;
     for (let k = startAnchor.index + 1; k < endAnchor.index; k++) {
-      objects[k].distance = roundTo(segmentDistances[distIndex++], 0); // Rounded for neatness
+      objects[k].distance = roundTo( segmentDistances[distIndex++], 0); // Rounded for neatness
       objects[k].distanceAU = roundTo(  objects[k].distance / CONSTANTS.KM_PER_AU, 2)
     }
   }
@@ -491,7 +491,23 @@ function generateDwarfPlanet(prefilled, system) {
 
 
 function generateDoublePlanet(prefilled, template, system ) {
-    return prefilled //generatePlanet(prefilled, template, system)   //could be a double dwarf-planet!
+    let type1 = prefilled?.planet1?.type ||  getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
+    let template1 = PLANET_TYPES[type1]
+    let prefilled1 = prefilled.planet1 || { distance: prefilled.distance, type: type1, class: "PLANET" }
+    let planet1 = generatePlanet( prefilled1, template1, system)
+
+    let type2 = prefilled?.planet1?.type || type1
+    let template2 = PLANET_TYPES[type2]
+    let prefilled2 = prefilled.planet2 || { distance: prefilled.distance, type: type2, class: "PLANET" }
+    prefilled2.mass ??= prefilled1.mass // minus random percentage!
+    planet2 = generatePlanet( prefilled2, template2, system)
+
+    prefilled.planet1 = planet1
+    prefilled.planet2 = planet2
+    prefilled.distance ??= 100000 // randomized based on radius
+    //barycenter distance
+
+    return prefilled //generatePlanet(prefilled, template, system)   //could be a  ccffhjvhhhhhhhhhhcxcbxvdouble dwarf-planet!
 }
 
 
@@ -519,6 +535,7 @@ function generateBelt(prefilled, template, system, insideSharp = false, outsideS
 
 
 function generateSplitBelt(prefilled, system, avgDistance) {
+    return generateBelt(prefilled, null, system, true, true)
     return prefilled
     innerBelt = generateBelt({}, {}, system, avgDistance - 0.5 * CONSTANTS.KM_PER_AU, insideSharp = false, outsideSharp = true)
     dwarfPlanet = generateDwarfPlanet({ distance: avgDistance }, system)
@@ -590,14 +607,18 @@ function generateSplitBelt(prefilled, system, avgDistance) {
                     //always based on the template (which might be empty)
                     orbit_prefilled = orbits[i]  
                     //decide for an object-type (could also be dependend on frostline, etc.)
-                    orbit_class = getWeightedRandomFromObject(DISTRIBUTION_ORBIT_CONTENT)
+                    
+                    orbit_class = orbit_prefilled.class || getWeightedRandomFromObject(DISTRIBUTION_ORBIT_CONTENT)
                     designation = null
                     type = null
+                    if( ["DWARF_PLANET", "TERRESTIAL_PLANET", "ICE_GIANT", "GAS_GIANT"].includes( orbit_prefilled.type)) {
+                        orbit_class = "PLANET"
+                    }
                     template = null
-                    if (orbit_class === "PLANET") {
+                    if (orbit_class === "PLANET" ) {
                         n_planets += 1;
                         designation = toRoman(n_planets)
-                        type = getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
+                        type = orbit_prefilled.type ||  getWeightedRandomFromObject(DISTRIBUTION_PLANETS)
                         template = PLANET_TYPES[type]
                     }                   
                     else if (orbit_class === "DOUBLE_PLANET") {
@@ -608,7 +629,7 @@ function generateSplitBelt(prefilled, system, avgDistance) {
                     }
                     else if (orbit_class === "ASTEROID_BELT") {
                         n_belts += 1;
-                        type = "BELT"
+                        type = "ASTEROID_BELT"
                         designation = `${n_belts}. belt`
                         template = ASTEROID_BELT
                     }
@@ -618,6 +639,8 @@ function generateSplitBelt(prefilled, system, avgDistance) {
                         designation = `${n_belts} belt inner/outer`
                         template = SPLIT_ASTEROID_BELT
                     }
+
+
                     
                     //ID is always a good idea
                     orbit_prefilled.id ??= crypto.randomUUID();

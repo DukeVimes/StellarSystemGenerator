@@ -79,11 +79,48 @@ function getScaledRadius(realKm) {
 
 
 
+function visualizeDoublePlanet(prefilled, settings) {
+    let width = 0
+    let height = 0
+    let center_x = 0
+    let center_y = 0
+    distance = 80 // should be dynamic
+
+    let svg = ""
+    planet1 = prefilled.planet1
+    planet2 = prefilled.planet2
+
+    vp1 = visualizePlanetarySystem( planet1, settings, false )
+    vp2 = visualizePlanetarySystem( planet2, settings, false )
+
+    width = Math.max(vp1.width, vp2.width)
+    height = vp1.height + distance + vp2.height
+    center_x = width / 2
+    center_y = height / 2 //vp1.height + distance / 2
+    svg = `<g>
+       <g transform="translate(${vp1.width/2}, ${center_y - (vp1.height + distance/2)} )">
+           ${vp1.svg}
+       </g>
+       <g transform="translate(${vp2.width/2}, ${center_y + ( distance/2)} )">
+           ${vp2.svg}
+       </g>
+       <text x="${center_x}" y="${center_y + 150}" fill="#ffffff" font-family="monospace" font-size="10" font-weight="bold" 
+                         text-anchor="middle">
+                ${prefilled.designation}
+       </text>
+    </g>`
+
+    return {
+        "svg": svg,
+        "width": width,
+        "height": height,
+        "center_x": center_x,
+        "center_y": center_y
+    }
+}
 
 
-
-
-function visualizePlanetarySystem(prefilled) {
+function visualizePlanetarySystem(prefilled, settings, addDesignation=true) {
     let width = 0
     let height = 0
     let center_x = 0
@@ -182,13 +219,15 @@ function visualizePlanetarySystem(prefilled) {
           <g transform="rotate(${prefilled.axisTilt}, ${center_x}, ${center_y})">
             ${svg_planet}
             ${svg_axis}
-          </g>
-            <text x="${center_x}" y="${center_y + 150}" fill="#ffffff" font-family="monospace" font-size="10" font-weight="bold" 
+          </g>`
+    if( addDesignation ) {
+        svg += `<text x="${center_x}" y="${center_y + 150}" fill="#ffffff" font-family="monospace" font-size="10" font-weight="bold" 
                          text-anchor="middle">
                 ${prefilled.designation}
-            </text>
-       </g>
-    `;
+            </text>`
+     }
+     svg +=  `</g>`
+    ;
 
     /*
     

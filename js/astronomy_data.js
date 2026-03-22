@@ -389,7 +389,7 @@ DISTRIBUTION_PLANETS = {
 
 const PLANET_TYPES = {
     GAS_GIANT: {
-        mass_range: [0.01 * CONSTANTS.MASS_JUPITER, 13 * CONSTANTS.MASS_JUPITER],
+        mass_range: [0.1 * CONSTANTS.MASS_JUPITER, 13 * CONSTANTS.MASS_JUPITER],
         density_range: [0.05, 0.5]   //g per cm`3  
     },
     ICE_GIANT: {

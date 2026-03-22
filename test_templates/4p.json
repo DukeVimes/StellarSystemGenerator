@@ -1,7 +1,6 @@
 {
     "orbits": [
-        {},
-        {},
+        {   "class": "DOUBLE_PLANET"},
         {
             "type": "DWARF_PLANET",
             "distance": "1 AU"
